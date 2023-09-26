@@ -1,0 +1,90 @@
+<!-- templates/add_user.html -->
+{% extends 'master.html' %}
+
+{% block title %}Add Space | Your Space{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1>Register New Space</h1>
+        <form method="post" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <div class="row">
+                <div class="form-group col">
+                    {{ form.name.label(class="mandatory") }} {{ form.name(class="form-control") }}
+                    {% if form.name.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.name.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                    {% endif %}
+                </div>
+                <div class="form-group col-1">
+                    {{ form.is_ready.label }} {{ form.is_ready(class="form-control") }}
+                    {% if form.is_ready.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.is_ready.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                    {% endif %}
+                </div>            
+            </div>
+            <div class="form-group">
+                {{ form.description.label }} {{ form.description(class="form-control") }}
+                {% if form.description.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.description.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            <div class="row">
+                <div class="form-group col">
+                    {{ form.area.label }} {{ form.area(class="form-control") }}
+                    {% if form.area.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.area.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                    {% endif %}
+                </div>
+                <div class="form-group col">
+                    {{ form.capacity.label }} {{ form.capacity(class="form-control") }}
+                    {% if form.capacity.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.capacity.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
+                {{ form.location.label }} {{ form.location(class="form-control") }}
+                {% if form.location.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.location.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.photo.label }} {{ form.photo(class="form-control") }}
+                {% if form.photo.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.photo.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add Space" class="btn btn-primary">
+            </div>
+        </form>
+    </div>
+{% endblock %}

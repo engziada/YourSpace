@@ -1,0 +1,57 @@
+<!-- templates/home.html -->
+{% extends 'master.html' %}
+
+{% block title %}Login | Your Space{% endblock %}
+
+{%block styles%}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/login.css') }}">
+{% endblock %}
+
+{% block content %}
+        <div class="container">
+        <div class="translucent-box">
+
+            <div class="logo">
+                <!-- Your logo or branding here -->
+                <!-- <lottie-player src="https://lottie.host/63d855d0-8479-46a9-a84e-43039729d555/YQSQlEZ9r5.json" background="#FFFFFF" speed="1" style="width:300px; height:300px" loop controls autoplay direction="1" mode="normal"></lottie-player> -->
+
+                <img src="/static/images/loginanim.gif" alt="Logo" style="width: 128px;">
+                <!-- <span class="material-symbols-outlined">door_open</span> -->
+            </div>
+            <div class="login-form">
+                <h2>Login</h2>
+                <form method="post">
+                    {{ form.hidden_tag() }}
+                    <div class="input-group">
+                        <i class="material-icons input-icon">email</i>
+                        <input type="text" name="username" placeholder="Email" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="material-icons input-icon">lock</i>
+                        <input type="password" name="password" placeholder="Password" required>
+                    </div>
+                    <button type="submit">Login</button>
+                    <!-- {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            <div class="error-message">
+                                {% for message in messages %}
+                                    {{ message }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %} -->
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+
+    {% block scripts %}
+    <script>
+        // Function to dismiss the Bootstrap alert when the close button is clicked
+        $(document).ready(function() {
+            $(".alert").alert();
+        });
+    </script>
+
+    {% endblock %}

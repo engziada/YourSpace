@@ -1,0 +1,70 @@
+<!-- templates/add_user.html -->
+{% extends 'master.html' %}
+
+{% block title %}Add Subscription | Your Space{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1>Register New Subscription</h1>
+        <form method="post" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <div class="row">
+                <div class="form-group col">
+                    {{ form.name.label(class="mandatory") }} {{ form.name(class="form-control") }}
+                    {% if form.name.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.name.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                    {% endif %}
+                </div>
+                <div class="form-group col-1">
+                    {{ form.is_active.label }} {{ form.is_active(class="form-control") }}
+                    {% if form.is_active.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.is_active.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col">
+                    {{ form.hours.label(class="mandatory") }} {{ form.hours(class="form-control") }}
+                    {% if form.hours.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.hours.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                    {% endif %}
+                </div>
+                <div class="form-group col">
+                    {{ form.price.label (class="mandatory")}} {{ form.price(class="form-control") }}
+                    {% if form.price.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.price.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
+                {{ form.description.label }} {{ form.description(class="form-control") }}
+                {% if form.description.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.description.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add Subscription" class="btn btn-primary">
+            </div>
+        </form>
+    </div>
+{% endblock %}

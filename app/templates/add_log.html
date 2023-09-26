@@ -1,0 +1,95 @@
+<!-- templates/add_user.html -->
+{% extends 'master.html' %}
+
+{% block title %}New Reservation | Your Space{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1>New Reservation</h1>
+        <form method="post" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <div class="row">
+                <div class="form-group col">
+                    {{ form.space.label(class="mandatory") }} {{ form.space(class="form-control") }}
+                    {% if form.space.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.space.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                    {% endif %}
+                </div>
+                <div class="form-group col">
+                    {{ form.package.label(class="mandatory") }} {{ form.package(class="form-control") }}
+                    {% if form.package.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.package.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                    {% endif %}
+                </div>        
+            </div>    
+            <div class="form-group">
+                {{ form.customer_search.label(class="mandatory") }} {{ form.customer_search(class="form-control") }}
+                {% if form.customer_search.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.customer_search.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Search" name="search" class="btn btn-primary">
+            </div>
+
+            {% if form.customer_details.data %}
+            <hr>
+            <h3>{{form.customer_details.data.name}} ({{form.customer_details.data.phone}})</h3>
+            <div class="table-container">
+                <div class="table-row">
+                    <div class="table-header">Email:</div>
+                    <div class="table-data">{{ form.customer_details.data.email }}</div>
+                    <div class="table-header">Gender:</div>
+                    <div class="table-data">{{ form.customer_details.data.gender }}</div>
+                </div>
+                <div class="table-row" style="border-color: gray;">
+                    <div class="table-header">Job:</div>
+                    <div class="table-data">{{ form.customer_details.data.job }}</div>
+                    <div class="table-header">Institute:</div>
+                    <div class="table-data">{{ form.customer_details.data.institute }}</div>
+                </div>
+                {% if form.customer_details.data.subscription %}
+                    {% if form.customer_details.data.subscription.id!=1 and form.customer_details.data.subscription and form.customer_details.data.subscription_remaining>0%}
+                    <br>
+                    <div class="table-row">
+                        <div class="table-header">Subscription:</div>
+                        <div class="table-data">{{ form.customer_details.data.subscription.name }}</div>
+                        <div class="table-header">Use Subscription Hours:</div>
+                        <div class="table-data">                
+                            {{ form.use_subscription(checked=checked) }}
+                            {% if form.use_subscription.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.use_subscription.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="table-row">
+                        <div class="table-header">Start Date:</div>
+                        <div class="table-data">{{ form.customer_details.data.subscription_startdate }}</div>
+                        <div class="table-header">Remaining Hours :</div>
+                        <div class="table-data">{{ form.customer_details.data.subscription_remaining }}</div>
+                    </div>
+                    {% endif %}
+                {% endif %}
+                <br>
+                <button type="submit" name="confirm" class="btn btn-info expand-button">Confirm</button>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+{% endblock %}

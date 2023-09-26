@@ -1,0 +1,40 @@
+<!-- templates/users.html -->
+{% extends 'master.html' %}
+
+{% block title %}Pricing Rules | Your Space{% endblock %}
+
+{% block content %}
+    <h1>Pricing Rules Management</h1>
+
+    <table class="table table-striped  table-responsive">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>From (Min)</th>
+                <th>To (Min)</th>
+                <th>Hourly Rate (SR)</th>
+                <th>Package</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pricing_rule in pricing_rules %}
+            <tr>
+                <td>{{ pricing_rule.id }}</td>
+                <td>{{ pricing_rule.from_ }}</td>
+                <td>{{ pricing_rule.to_ }}</td>
+                <td>{{ pricing_rule.hourly_rate }}</td>
+                <td>{{ pricing_rule.package.name }}</td>
+                <td>
+                    <!-- Add the links to edit and delete users -->
+                    <a href="{{ url_for('edit_pricing_rule', pricing_rule_id=pricing_rule.id) }}">Edit</a> |
+                    <a href="{{ url_for('delete_pricing_rule', pricing_rule_id=pricing_rule.id) }}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Add new user link -->
+    <a href="{{ url_for('add_pricing_rule') }}" class="btn btn-primary">Add New Pricing Rule</a>
+{% endblock %}

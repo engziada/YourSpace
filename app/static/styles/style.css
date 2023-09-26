@@ -1,0 +1,357 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* font-size: 16px; */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    /* Set a background color or gradient as a fallback */
+    background: linear-gradient(to bottom, #f0f0f0, #d0d0d0);
+    
+    /* Adjust the opacity of the background image */
+    position: relative;
+}
+
+body::before {
+    content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('/static/images/bg3.jpg');
+        /* Adjust the image path */
+        background-size: cover;
+        opacity: 0.1;
+        /* Adjust the opacity of the background image */
+        pointer-events: none;
+        /* Ensure the overlay doesn't interfere with content */
+        z-index: -1;
+        /* Place the overlay behind the content */
+}
+
+.content {
+    min-height: 100%;
+    min-width: 100%;
+    /* Ensure the container takes at least 100% of viewport height */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* Distribute space between header, content, and footer */
+}
+/* **************  ************** */
+/* Add this to your existing CSS styles */
+footer {
+    position: relative;
+    background-image: url('/static/images/bg3.jpg');
+    /* Adjust the image path */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 30px;
+    /* Adjust the height as needed */
+    margin-top: 50px;
+    /* Adjust margin to separate footer from content */
+}
+
+.footer-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0b3571a0;
+    /* Adjust the overlay color and opacity */
+}
+
+.footer-content {
+    /* position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -30%); */
+    text-align: center;
+    color: gainsboro;
+    text-transform: uppercase;
+    font-size: 2vw;
+    padding-top: 5px;
+    @media (min-width: 768px) {
+        font-size: smaller;
+    }
+    @media (max-width: 480px) {
+        font-size: 2.5vw;
+    }
+}
+
+footer a {
+    color: inherit;
+    text-decoration: none;
+}
+/* **************  ************** */
+
+.flash-message{
+    animation: fadeOut 10s forwards;
+    padding-left: 10px;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+/* Styling for Success Messages */
+.flash-success {
+    color: #1c7227;
+    background-color: #d7f8d9;
+    border-color: #caf5c6;
+}
+
+/* Styling for Error Messages */
+.flash-danger,
+.flash-error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+/* Styling for Info Messages */
+.flash-info {
+    animation: fadeOut 30s forwards;
+    color: #221c72;
+    background-color: #d7d9f8;
+    border-color: #c8c6f5;
+    text-align: center;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    animation: fadeOut 10s forwards;
+    /* Fade out after 5 seconds */
+}
+
+.alert-success {
+    color: #1c7227;
+    background-color: #d7f8d9;
+    border-color: #caf5c6;
+    animation: fadeOut 10s forwards;
+    /* Fade out after 5 seconds */
+}
+
+/* Keyframes animation for fading out */
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.invalid-feedback {
+    display: block;
+    color: #dc3545;
+    padding-left: 20px;
+    font-size: 0.9em;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+    
+}
+.invalid-feedback::before {
+    content: "\2022";
+    color: #dc3545;
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+
+}
+
+/* **************  ************** */
+
+.dark-bg-color {
+    background-color: #0B3571;
+
+}
+
+.navbar .container::before {
+    /* Set the image as a background for the pseudo-element with transparency */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/static/images/bg3.jpg');
+    background-repeat: repeat;
+    background-position: center;
+    opacity: 0.1;
+    z-index: 1;
+}
+
+.navbar-toggler,.nav-item{
+    z-index: 2;
+}
+
+.light-bg-color {
+    background-color: transparent;
+}
+
+.site-logo{
+    width: 128px;
+}
+
+.navbar .nav-link {
+    color: white;
+    font-size: 18px;
+}
+
+.navbar .nav-item .nav-link.user {
+    color: #FB4517;
+    font-weight: bold;
+}
+
+.navbar .dropdown-menu .dropdown-item:hover {
+    background-color: #FB4517;
+    color: white;
+    /* Set your desired color here */
+}
+
+.navbar .nav-item .dropdown-menu .dropdown-item span{
+    vertical-align: bottom;
+}
+
+.navbar .nav-item .dropdown-menu .separator {
+    content: "";
+    border-left: 1px solid #ccc;
+    height: 18px;
+    margin: 0 5px;
+    display: inline-block;
+}
+
+/* **************  ************** */
+
+.btn-primary {
+    background-color: #FB4517;
+    border-color: #0B3571;
+    color: white;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.btn-secondary {
+    background-color: #0B3571;
+    border-color: #FB4517;
+    color: white;
+    min-width: 100px;
+}
+
+.btn-secondary:hover {
+    background-color: #FB4517;
+    border-color: #0B3571;
+    color: white;
+}
+/* **************  ************** */
+
+.table-container {
+    display: flex;
+    flex-direction: column;
+    min-width: 100%;
+}
+
+.table-row {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #ccc;
+    padding: 8px 0;
+}
+
+.table-header {
+    font-weight: bold;
+    width: 40%;
+}
+
+.table-data {
+    width: 60%;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    max-width: 100%;
+    table-layout: fixed;
+    width: 100%;
+}
+
+th,
+td {
+    white-space: nowrap;
+    width: 50%;
+    text-align: center;
+}
+
+.sub_table_title {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #FB4517;
+}
+
+/* **************  ************** */
+
+.mandatory:after {
+    content: "*";
+    color: red;
+    margin-left: 5px;
+    /* Adjust margin for spacing */
+}
+
+/* **************  ************** */
+.modal-header{
+    background-color: #FB4517;
+    display: flex;
+    flex-direction: row;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: .8rem;
+    border-top-right-radius: .8rem;
+    height: 50px;
+    align-items: center;
+}
+
+.modal-title{
+    padding-left: 0.5rem;
+
+}
+
+/* Translucent Background */
+.modal-content {
+    background-color: rgba(255, 255, 255, 0.719);
+    border: none;
+    border-radius: 0.8rem;
+    font-size: large;
+    font-weight: bold;
+
+}
+
+.modal-body{
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.modal-footer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.modal hr{
+    border-top: 1px solid #FB4517;
+    width: 100%;
+}
+
+/* Center modal on small screens */
+@media (max-width: 767px) {
+    .modal-dialog.modal-dialog-centered {
+        max-width: 90%;
+        margin: auto;
+    }
+}

@@ -1,0 +1,59 @@
+<!-- templates/add_user.html -->
+{% extends 'master.html' %}
+
+{% block title %}Add Pricing Rule | Your Space{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1>Add New Pricing Rule</h1>
+        <form method="post" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <div class="row">
+                <div class="form-group col">
+                    {{ form.from_.label(class="mandatory") }} {{ form.from_(class="form-control") }}
+                    {% if form.from_.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.from_.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                    {% endif %}
+                </div>
+                <div class="form-group col">
+                    {{ form.to_.label(class="mandatory") }} {{ form.to_(class="form-control") }}
+                    {% if form.to_.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.to_.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
+                {{ form.hourly_rate.label(class="mandatory") }} {{ form.hourly_rate(class="form-control") }}
+                {% if form.hourly_rate.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.hourly_rate.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.package.label }} {{ form.package(class="form-control") }}
+                {% if form.package.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.package.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Add Pricing Rule" class="btn btn-primary">
+            </div>
+        </form>
+    </div>
+{% endblock %}

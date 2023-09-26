@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{% block title %}Your Space{% endblock %}</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+
+    {% block styles %}
+    {% endblock %}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.5/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+    {% block header_scripts %}
+    {% endblock %}
+
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark dark-bg-color">
+        <div class="container">
+            <!-- Site name and logo -->
+            <a class="navbar-brand" href="#">
+                <img class="site-logo" src="/static/images/logo.png" alt="Logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                                Customers
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                
+                                <a class="dropdown-item" href="{{ url_for('customers') }}">
+                                    <span class="material-symbols-outlined">list</span>
+                                    <span class="separator"></span>
+                                    List</a>
+                                
+                                <a class="dropdown-item" href="{{ url_for('jobs') }}">
+                                    <span class="material-symbols-outlined">work</span>
+                                    <span class="separator"></span>
+                                    Jobs</a>
+
+                                <a class="dropdown-item" href="{{ url_for('institutes') }}">
+                                    <span class="material-symbols-outlined">school</span>
+                                    <span class="separator"></span>
+                                    Institutes</a>
+
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <!-- Main menu dropdown -->
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Admin
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" href="{{ url_for('spaces') }}">
+                                    <span class="material-symbols-outlined">chair_alt</span>
+                                    <span class="separator"></span>
+                                    Spaces</a>
+                                <a class="dropdown-item" href="{{ url_for('packages') }}">
+                                    <span class="material-symbols-outlined">deployed_code_history</span>
+                                    <span class="separator"></span>
+                                    Packages</a>
+                                <a class="dropdown-item" href="{{ url_for('pricing_rules') }}">
+                                    <span class="material-symbols-outlined">payments</span>
+                                    <span class="separator"></span>
+                                    Pricing</a>
+                                <a class="dropdown-item" href="{{ url_for('subscriptions') }}">
+                                    <span class="material-symbols-outlined">card_membership</span>
+                                    <span class="separator"></span>
+                                    Subscriptions</a>    
+                                <a class="dropdown-item" href="{{ url_for('users') }}">
+                                    <span class="material-symbols-outlined">group</span>
+                                    <span class="separator"></span>
+                                    Employees</a>
+                                <a class="dropdown-item" href="{{ url_for('dashboard') }}">
+                                    <span class="material-symbols-outlined">bar_chart_4_bars</span>
+                                    <span class="separator"></span>
+                                    Dashboard</a>
+                            </div>
+                        </div>
+                    </li>
+                    {% endif %}
+
+                    <li class="nav-item">
+                        <!-- Main menu link to about page -->
+                        <a class="nav-link" href="{{ url_for('about') }}">About</a>
+                    </li>
+
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <div class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #FB4517;">
+                                    Welcome, {{ current_user.username }}
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    
+                                    <a class="dropdown-item" href="{{ url_for('change_password') }}">
+                                        <span class="material-symbols-outlined">key</span>
+                                        <span class="separator"></span>
+                                        Change Password</a>
+                                    
+                                    <a class="dropdown-item" href="{{ url_for('logout') }}">
+                                        <span class="material-symbols-outlined">logout</span>
+                                        <span class="separator"></span>
+                                        Logout</a>
+                                </div>
+                            </div>
+                        </li>
+
+                    {% else %}
+                        <li class="nav-item">
+                            <!-- Login link (add the login route) -->
+                            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+            
+            <div class="navbar-brand">
+                <div class="clock-container">
+                    <div id="digital-clock" class="digital-clock"></div>
+                </div>                    
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- Flash messages -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            <div class="container">
+                {% for category,message in messages %}
+                    <!-- <div class="alert {% if 'Error' in message %}alert-danger{% elif 'Done' in message%}alert-success{% endif %}">{{ message }}</div> -->
+                    <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endwith %}
+    </div>
+
+    <!-- Content block -->
+    <div class="container mt-5 px-0 mx-auto">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <footer>
+        <div class="footer-overlay">
+            <div class="footer-content">
+                <p>&copy; All rights reserved for Your Space 2023, Designed by: <a href="https://www.linkedin.com/in/MuhammadZiada" target="_blank">Muhammad Ziada</a>.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- Add Bootstrap JS and jQuery -->
+
+    {% block scripts %}
+    {% endblock %}
+</body>
+
+</html>

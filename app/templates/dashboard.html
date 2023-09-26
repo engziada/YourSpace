@@ -1,0 +1,49 @@
+<!-- templates/dashboard.html -->
+{% extends 'master.html' %}
+
+{% block title %}Dashboard | Your Space{% endblock %}
+
+{% block header_scripts %}
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+{% endblock %}
+
+
+{% block content %}
+    <h1>Dashboard</h1>
+    <p>Welcome, admin!</p>
+    <hr>
+    
+        <!-- Step (6): Revenue Analysis -->
+        {{ chart6|safe }}
+
+    <!-- Step (4): Monthly Customer Growth -->
+    {{ chart4|safe }}
+
+        <!-- Step (8): Package Analysis -->
+        {{ chart8|safe }}
+
+    <!-- Step (3): Subscriptions Per Month -->
+    {{ chart3|safe }}
+
+        <!-- Step (5): Usage Over Time -->
+        {{ chart5|safe }}
+
+    <!-- Step (1): Gender Distribution Chart -->
+    {{ chart1|safe }}
+
+        <!-- Step (9): Subscription Analysis -->
+        {{ chart9|safe }}
+
+    <!-- Step (7): Customer Behavior -->
+    {{ chart7|safe }}
+
+        <!-- Step (2): Job Distribution -->
+        {{ chart2|safe }}
+
+
+
+{% endblock %}
+
+
+{% block scripts %}
+{% endblock %}

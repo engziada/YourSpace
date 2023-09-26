@@ -1,0 +1,286 @@
+<!-- templates/users.html -->
+{% extends 'master.html' %}
+
+{% block title %}Logs | Your Space{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <h1 class="col">Reservations</h1>
+        <a href="{{ url_for('add_log') }}" class="btn btn-primary col">New Reservation</a>
+    </div>
+    <hr>
+    <label><input type="checkbox" id="todayCheckbox"> Today's Only</label> |
+    <label><input type="checkbox" id="activeCheckbox"> Active Only</label> |
+    <a href="{{ url_for('export_to_excel', model_name='Log') }}">Export to Excel</a>
+
+    <table class="table table-striped  table-responsive" id="refreshDiv">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Space</th>
+                <th>Customer</th>
+                <th>Employee</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Period/Rem</th>
+                <th>Subscription</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs.items %}
+            <tr class="log-row" data-start-time="{{ log.start_time }}" data-active="{{ log.is_active }}">
+                <td>{{ log.id }}</td>
+                <td>{{ log.space.name }}</td>
+                <td>{{ log.customer.name }}</td>
+                <td>{{ log.employee.name }}</td>
+                <td>{{ log.start_time}}</td>
+                <td>{{ log.end_time}}</td>
+                {% if log.period %}
+                    <td>
+                        {{ log.period }}
+                    </td>
+                {%else%}
+                    {% if not log.use_subscription %}
+                        <td style="color: green;">
+                            {{calculate_time_difference(log.start_time)}}
+                        </td>
+                    {% else %}
+                        <td style="color: red;">
+                            {{calculate_time_remaining(log.start_time,log.customer.subscription_remaining)[0]}}
+                        </td>
+                    {% endif %}
+                {% endif %}
+                <td>{{ log.use_subscription }}</td>
+                <td>{{ log.total_price }}</td>
+                <td style="text-align: left;">
+                    <a href="#" data-target="#modal2-{{ log.id }}" data-toggle="modal" data-log-id="{{log.id}}">
+                        <span class="material-icons" title="Details">info</span>
+                    </a>
+                    <!-- Bootstrap Modal -->
+                    <div class="modal fade" id="modal2-{{ log.id }}" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content" id="modal-content-{{ log.id }}">
+                                <!-- Title Bar -->
+                                <div class="modal-header text-white">
+                                    <span class="material-symbols-outlined">info</span>
+                                    <h5 class="modal-title" id="resultModalLabel"> Reservation Details</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true" style="color: whitesmoke;">&times;</span>
+                                    </button>
+                                </div>
+                                
+                                <!-- Modal Body -->
+                                <div class="modal-body">
+                                    <div class="table-container" style="text-align: left;">
+                                        <div class="table-row" style="border: none;">
+                                            <div class="table-header">Customer Phone:</div>
+                                            <div class="table-data" style="font-weight: lighter;">{{ log.customer.phone }}</div>
+                                        </div>
+                                        <div class="table-row" style="border: none;">
+                                            <div class="table-header">Customer Email:</div>
+                                            <div class="table-data" style="font-weight: lighter;">{{ log.customer.email }}</div>
+                                        </div>
+                                        <hr>
+                                        {% if log.use_subscription %}
+                                            <div class="table-row" style="border: none;">
+                                                <div class="table-header">Checkout Method:</div>
+                                                <div class="table-data" style="font-weight: lighter;">Subscription</div>
+                                            </div>
+                                            <div class="table-row" style="border: none;">
+                                                <div class="table-header">Subscription:</div>
+                                                <div class="table-data" style="font-weight: lighter;">{{ log.customer.subscription.name }}</div>
+                                            </div>
+                                            <div class="table-row" style="border: none;">
+                                                <div class="table-header">Remaining:</div>
+                                                <div class="table-data" style="font-weight: lighter;">{{ (log.customer.subscription_remaining *60)//60 }}h {{((log.customer.subscription_remaining *60)%60)|int}}m</div>
+                                            </div>
+                                        {%else%}
+                                            <div class="table-row" style="border: none;">
+                                                <div class="table-header">Checkout Method:</div>
+                                                <div class="table-data" style="font-weight: lighter;">Cash</div>
+                                            </div>
+                                            <div class="table-row" style="border: none;">
+                                                <div class="table-header">Package:</div>
+                                                <div class="table-data" style="font-weight: lighter;">{{ log.package.name }}</div>
+                                            </div>
+                                            <div class="table-row" style="border: none;">
+                                                <div class="table-header">Price:</div>
+                                                <div class="table-data" style="font-weight: lighter;">{{ log.total_price }} SR</div>
+                                            </div>
+                                        {%endif%}
+
+                                    </div>
+                                </div>
+                                
+                                <!-- Modal Footer -->
+                                <div class="modal-footer">
+                                    <button type="button btn btn-primary" class="close" data-dismiss="modal" aria-label="Close">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    {% if log.is_active %}
+                    <a href="#" style="color: brown; font-weight: bolder;" class="calculate-link" data-target="#modal-{{ log.id }}" data-toggle="modal" data-log-id="{{log.id}}">
+                        <span class="material-icons" title="Checkout">credit_score</span>
+                    </a>
+                    <!-- Bootstrap Modal -->
+                    <div class="modal fade" id="modal-{{ log.id }}" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content" id="modal-content-{{ log.id }}">
+                                <!-- Title Bar -->
+                                <div class="modal-header text-white">
+                                    <span class="material-symbols-outlined">
+                                    point_of_sale
+                                    </span>
+                                    <h5 class="modal-title" id="resultModalLabel"> Checkout</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true" style="color: whitesmoke;">&times;</span>
+                                    </button>
+                                </div>
+                                
+                                <!-- Modal Body -->
+                                <div class="modal-body">
+                                    <div id="resultDiv-{{ log.id }}"></div>
+                                </div>
+                                
+                                <!-- Modal Footer -->
+                                <div class="modal-footer">
+                                    <a href="{{url_for('stop_log',log_id=log.id)}}" class="btn btn-secondary">Confirm</a>
+                                    <button type="button" class="btn btn-secondary saveImage" data-modal-id="{{log.id}}">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination controls -->
+    <div class="pagination">
+        {% if logs.has_prev %}
+            <a href="{{ url_for('logs', page=logs.prev_num) }}">
+                <span class="material-symbols-outlined">chevron_left</span>
+            </a>
+        {% endif %}
+        <span>{{ logs.page }} of {{ logs.pages }}</span>
+        {% if logs.has_next %}
+            <a href="{{ url_for('logs', page=logs.next_num) }}">
+                <span class="material-symbols-outlined">chevron_right</span>
+            </a>
+        {% endif %}
+    </div>
+    <br>
+{% endblock %}
+
+{% block scripts%}
+    <!-- Add a script to handle the filter -->
+    <script>
+        const todayCheckbox = document.getElementById('todayCheckbox');
+        const activeCheckbox = document.getElementById('activeCheckbox');
+        const logRows = document.querySelectorAll('.log-row');
+
+        function applyTodayFilter() {
+            const today = new Date().toLocaleDateString();
+            logRows.forEach(row => {
+                const startTime = new Date(row.getAttribute('data-start-time')).toLocaleDateString();
+
+                if (todayCheckbox.checked){
+                    if(startTime === today){
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }} else {
+                    row.style.display = '';
+                }
+            });
+        }
+
+        function applyActiveFilter() {
+            logRows.forEach(row => {
+                const isActive = row.getAttribute('data-active')==='True';
+
+                if (activeCheckbox.checked){
+                    if(isActive){
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }} else {
+                    row.style.display = '';
+                }
+            });
+        }
+
+        activeCheckbox.addEventListener('change', applyActiveFilter);
+        todayCheckbox.addEventListener('change', applyTodayFilter);
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            var logId = 0;
+            $('.calculate-link').click(function(event) {
+                event.preventDefault(); // Prevent the default link behavior
+                logId = $(this).data('log-id');
+                var resultDiv = document.getElementById('resultDiv-'+logId);
+                // Send AJAX request to the Flask route
+                $.ajax({
+                    url: '/checkout/'+logId,
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        // Update modal content with the result
+                        resultDiv.innerHTML = response.result;
+                        // Show the modal
+                        $('#modal-'+logId).modal('show');
+                    },
+                    error: function() {
+                        console.error('Error fetching result.');
+                    }
+                });
+            });
+
+            // After modal is shown, attach an event listener to modal close
+            $('#modal-'+logId).on('hidden.bs.modal', function () {
+                // Redirect to the desired URL after modal is closed
+                window.location.href = '/logs';  // Replace with your target URL
+            });
+        });
+
+    </script>
+
+    <script>
+    $(document).ready(function() {
+        $(".saveImage").click(function() {
+            const modalId = $(this).data('modal-id');
+            // Get the current date and time in the local timezone
+            const now = new Date();
+            // Calculate the timezone offset for GMT+3 in minutes (180 minutes)
+            const timezoneOffset = 180;
+            // Calculate the timestamp in the target timezone
+            const targetTimestamp = now.getTime() + timezoneOffset * 60 * 1000;
+            // Create a new Date object using the target timestamp
+            const targetDate = new Date(targetTimestamp);
+            // Convert the Date object to a string with ISO 8601 format
+            const isoString = targetDate.toISOString();
+            // Replace invalid characters with underscores
+            const validFilename = isoString.replace(/:/g, '_').replace(/\./g, '_');
+            // Select the modal content element
+            const modalContent = document.getElementById('modal-content-'+modalId);
+            // Use html2canvas to capture the content and save as an image
+            html2canvas(modalContent).then(function(canvas) {
+                const imgData = canvas.toDataURL("image/png");
+                const a = document.createElement("a");
+                a.href = imgData;
+                a.download = "bill_"+validFilename+".png";
+                a.click();
+            });
+        });
+    });
+    </script>
+{%endblock%}

@@ -1,0 +1,35 @@
+<!-- templates/edit_user.html -->
+{% extends 'master.html' %}
+
+{% block title %}Edit Institute | Your Space{% endblock %}
+
+{% block content %}
+    <h1>Edit Institute</h1>
+    <form method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.name.label(class="mandatory") }} {{ form.name(class="form-control") }}
+                    {% if form.name.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.name.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                    {% endif %}
+                </div>
+            <div class="form-group">
+                {{ form.job.label(class="mandatory") }} {{ form.job(class="form-control") }}
+                {% if form.job.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.job.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save Changes" class="btn btn-primary">
+            </div>
+    </form>
+{% endblock %}

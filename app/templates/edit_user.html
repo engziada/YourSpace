@@ -1,0 +1,102 @@
+<!-- templates/edit_user.html -->
+{% extends 'master.html' %}
+
+{% block title %}Edit User | Your Space{% endblock %}
+
+{% block content %}
+    <h1>Edit User</h1>
+    <form method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+            <div class="form-group form-check">
+                {{ form.is_admin(class="form-check-input") }} {{ form.is_admin.label(class="form-check-label") }}
+            </div>
+            <div class="form-group">
+                {{ form.name.label(class="mandatory") }} {{ form.name(class="form-control") }}
+                {% if form.name.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.name.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.phone.label(class="mandatory") }} {{ form.phone(class="form-control") }}
+                {% if form.phone.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.phone.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.address.label }} {{ form.address(class="form-control") }}
+                {% if form.address.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.address.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.email.label }} {{ form.email(class="form-control") }}
+                {% if form.email.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.birthdate.label }} {{ form.birthdate(class="form-control") }}
+                {% if form.birthdate.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.birthdate.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.national_id.label }} {{ form.national_id(class="form-control") }}
+                {% if form.national_id.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.national_id.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.gender.label }} {{ form.gender(class="form-control") }}
+                {% if form.gender.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.gender.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            {% if employee.photo %}
+                <div>
+                    <img src="{{employee.photo}}" alt="No Photo" width="200">
+                </div>
+            {% endif %}
+            <div class="form-group">
+                {{ form.photo.label }} {{ form.photo(class="form-control") }}
+                {% if form.photo.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.photo.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save Changes" class="btn btn-primary">
+            </div>
+    </form>
+{% endblock %}

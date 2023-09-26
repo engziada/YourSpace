@@ -1,0 +1,41 @@
+<!-- templates/users.html -->
+{% extends 'master.html' %}
+
+{% block title %}Subscriptions | Your Space{% endblock %}
+
+{% block content %}
+    <h1>Subscriptions Management</h1>
+
+    <table class="table table-striped  table-responsive">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Hours</th>
+                <th>Price</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for subscription in subscriptions if subscription.id!=1 %}
+            <tr>
+                <td>{{ subscription.id }}</td>
+                <td>{{ subscription.name }}</td>
+                <td>{{ subscription.hours }}</td>
+                <td>{{ subscription.price }}</td>
+                <td>{{ subscription.is_active }}</td>
+                <td>
+                    <!-- Add the links to edit and delete users -->
+                    <a href="{{ url_for('subscription_details', subscription_id=subscription.id) }}">Details</a> |
+                    <a href="{{ url_for('edit_subscription', subscription_id=subscription.id) }}">Edit</a> |
+                    <a href="{{ url_for('delete_subscription', subscription_id=subscription.id) }}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Add new user link -->
+    <a href="{{ url_for('add_subscription') }}" class="btn btn-primary">Add New Subscription</a>
+{% endblock %}

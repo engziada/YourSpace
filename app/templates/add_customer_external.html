@@ -1,0 +1,115 @@
+<!-- templates/add_user.html -->
+{% extends 'master.html' %}
+
+{% block title %}Self-Registeration | Your Space{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1>Register Yourself</h1>
+        <form method="post" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.name.label(class="mandatory")}} {{ form.name(class="form-control") }}
+                {% if form.name.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.name.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.phone.label(class="mandatory") }} {{ form.phone(class="form-control") }}
+                {% if form.phone.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.phone.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.email.label(class="mandatory") }} {{ form.email(class="form-control") }}
+                {% if form.email.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.job.label }} {{ form.job(class="form-control", id='job-select') }}
+                {% if form.job.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.job.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.institute.label }} {{ form.institute(class="form-control", id='institute-select') }}
+                {% if form.institute.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.institute.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.gender.label }} {{ form.gender(class="form-control") }}
+                {% if form.gender.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.gender.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add Customer" class="btn btn-primary">
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const jobField = document.getElementById('job');
+    const instituteField = document.getElementById('institute');
+    const instituteDiv = document.getElementById('institute-div');
+    jobField.addEventListener('change', function() {
+        if (jobField !== null){
+        <!-- window.alert(jobField.value); -->
+        if (jobField.value == 1) {
+            instituteDiv.style.display = 'block';
+        } else {
+            instituteDiv.style.display = 'none';
+        }
+    }
+    });
+</script>
+<script>
+    // Fetch Institutes based on selected Job
+    document.getElementById('job-select').addEventListener('change', function() {
+        var jobId = this.value;
+        var instituteSelect = document.getElementById('institute-select');
+        instituteSelect.innerHTML = ''; // Clear existing options
+
+        if (jobId) {
+            fetch('/get_institutes/' + jobId)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(function(institute) {
+                        var option = document.createElement('option');
+                        option.value = institute.id;
+                        option.textContent = institute.name;
+                        instituteSelect.appendChild(option);
+                    });
+                });
+        }
+    });
+</script>
+{% endblock %}

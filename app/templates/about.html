@@ -1,0 +1,9 @@
+<!-- templates/home.html -->
+{% extends 'master.html' %}
+
+{% block title %}About | My App{% endblock %}
+
+{% block content %}
+    <img src="{{ url_for('static', filename='images/about.png') }}" alt="About" style="width: 100%;">
+    <!-- Add your home page content here -->
+{% endblock %}
