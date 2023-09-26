@@ -17,9 +17,9 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Space</th>
-                <th>Customer</th>
                 <th>Employee</th>
+                <th>Customer</th>
+                <th>Package</th>
                 <th>Start</th>
                 <th>End</th>
                 <th>Period/Rem</th>
@@ -32,9 +32,9 @@
             {% for log in logs.items %}
             <tr class="log-row" data-start-time="{{ log.start_time }}" data-active="{{ log.is_active }}">
                 <td>{{ log.id }}</td>
-                <td>{{ log.space.name }}</td>
-                <td>{{ log.customer.name }}</td>
                 <td>{{ log.employee.name }}</td>
+                <td>{{ log.customer.name }}</td>
+                <td>{{ log.package.name }}</td>
                 <td>{{ log.start_time}}</td>
                 <td>{{ log.end_time}}</td>
                 {% if log.period %}

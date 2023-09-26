@@ -88,6 +88,7 @@
                                             <div class="table-header">Email:</div>
                                             <div class="table-data" style="font-weight: lighter;">{{ customer.email }}</div>
                                         </div>
+                                        <hr>
                                         <div class="table-row">
                                             <div class="table-header">Gender:</div>
                                             <div class="table-data" style="font-weight: lighter;">{{ customer.gender }}</div>
@@ -100,6 +101,7 @@
                                             <div class="table-header">Institute:</div>
                                             <div class="table-data" style="font-weight: lighter;">{{ customer.institute }}</div>
                                         </div>
+                                        <hr>
                                         <div class="table-row" style="border: none;">
                                             <div class="table-header">Subscription:</div>
                                             <div class="table-data" style="font-weight: lighter;">
@@ -122,6 +124,13 @@
                                                 {% else %}
                                                     None
                                                 {% endif %} 
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="table-row" style="border: none;">
+                                            <div class="table-header">Creation Date:</div>
+                                            <div class="table-data" style="font-weight: lighter;">
+                                                {{ customer.creation_date}}
                                             </div>
                                         </div>
                                     </div>

@@ -146,13 +146,13 @@ def customers():
     if request.method == 'POST' and form.validate_on_submit() and 'search' in request.form:
         phone_number = form.phone.data
         customers = Customer.query.filter(
-            Customer.phone.like(f'%{phone_number}%')).order_by(asc(Customer.name)).paginate(page=page, per_page=per_page)  # .all()
+            Customer.phone.like(f'%{phone_number}%')).order_by(desc(Customer.creation_date)).paginate(page=page, per_page=per_page)  # .all()
         if not customers:
             flash('Customer not found!', 'danger')
             session['search_customer'] = request.form
             return render_template('customers.html', customers=customers, form=form)
     else:
-        customers = Customer.query.order_by(asc(Customer.name)).paginate(page=page, per_page=per_page)  # .all()
+        customers = Customer.query.order_by(desc(Customer.creation_date)).paginate(page=page, per_page=per_page)  # .all()
 
     return render_template('customers.html', customers=customers,form=form)
 
@@ -543,6 +543,9 @@ def edit_customer(customer_id):
             if form.subscription.data.id != 1:
                 customer.subscription_startdate = datetime.now()
                 customer.subscription_remaining = form.subscription.data.hours
+            else:
+                customer.subscription_startdate = None
+                customer.subscription_remaining = None
             
             form.populate_obj(customer)
             customer.gender = gender_label
