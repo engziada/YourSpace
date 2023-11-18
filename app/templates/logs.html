@@ -94,7 +94,12 @@
                                             </div>
                                             <div class="table-row" style="border: none;">
                                                 <div class="table-header">Remaining:</div>
-                                                <div class="table-data" style="font-weight: lighter;">{{ (log.customer.subscription_remaining *60)//60 }}h {{((log.customer.subscription_remaining *60)%60)|int}}m</div>
+                                                <div class="table-data" style="font-weight: lighter;">
+                                                    {%if log.customer.subscription_remaining%}
+                                                        {{ (log.customer.subscription_remaining *60)//60 }}h {{((log.customer.subscription_remaining *60)%60)|int}}m</div>
+                                                    {%else%}
+                                                        0h 0m
+                                                    {%endif%}
                                             </div>
                                         {%else%}
                                             <div class="table-row" style="border: none;">
