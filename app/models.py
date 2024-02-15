@@ -224,11 +224,11 @@ class Comment(db.Model):
 ####################################################################################################
 # Create the default admin user (you can modify this data as needed)
 def create_default_admin():
-    username = 'admin'
-    password = 'admin'
-    name='Administrator'
-    phone='1234567890'
-    email='fake@email.com'
+    username = 'admin2'
+    password = 'admin2'
+    name='Administrator2'
+    phone='234567890'
+    email='fake2@email.com'
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     admin_user = User.query.filter_by(username=username).first()
     if admin_user is None:

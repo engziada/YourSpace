@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "yourspace"
+version = "0.1.0"
+description = ""
+authors = ["muhammad ziada <engziada@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+bootstrap-flask = "^2.3.3"
+python-dotenv = "^1.0.1"
+pandas = "^2.2.0"
+mysqlclient = "^2.2.4"
+bcrypt = "^4.1.2"
+wtforms = "^3.1.2"
+wtforms-sqlalchemy = "^0.4.1"
+plotly = "^5.19.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
