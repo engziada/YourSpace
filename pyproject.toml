@@ -15,6 +15,7 @@ bcrypt = "^4.1.2"
 wtforms = "^3.1.2"
 wtforms-sqlalchemy = "^0.4.1"
 plotly = "^5.19.0"
+gunicorn = "^21.2.0"
 
 
 [build-system]
