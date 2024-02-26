@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from os import getenv
 from .helpers import calculate_time_difference,calculate_time_remaining
 from pytz import timezone
+
 
 # Load environment variables from .env file (only during development)
 load_dotenv()

@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import random
 import string
+from typing import LiteralString
 from flask import flash
 import pandas as pd
 import pytz
@@ -52,8 +53,8 @@ def calculate_time_remaining(start_time: datetime, last_time_remaining: float):
 
 # Generate Random Password
 def generate_password():
-    letters = string.ascii_letters
-    numbers = string.digits
+    letters: LiteralString = string.ascii_letters
+    numbers: LiteralString = string.digits
     return ''.join(random.choice(letters + numbers) for _ in range(10))
 
 

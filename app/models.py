@@ -4,11 +4,11 @@
 # from flask_sqlalchemy import SQLAlchemy
 # from enum import unique
 import datetime
-import bcrypt
+# import bcrypt
 from app import db, login_manager
 from flask_login import UserMixin
 from flask import flash, redirect, session, url_for
-
+from passlib.hash import bcrypt
 
 
 @login_manager.user_loader
@@ -39,15 +39,18 @@ class User(db.Model, UserMixin):
     # employee_data = db.relationship('Employee', back_populates='user', uselist=False)
     # customer_data = db.relationship('Customer', back_populates='user', uselist=False)
 
-    def set_password(self, password):
-        self.password_hash = bcrypt.hashpw(password.encode(
-            'utf-8'), bcrypt.gensalt()).decode('utf-8')
+    def __init__(self, username, password_hash, is_admin=False):
+        self.username: str = username
+        self.password_hash: str = password_hash
+        self.is_admin: bool = is_admin
 
-    def check_password(self, password):
-        return bcrypt.checkpw(password.encode('utf-8'), self.password_hash.encode('utf-8'))
+    def set_password(self, password) -> None:
+        self.password_hash: str = bcrypt.hash(secret=password.encode('utf-8'))
+    def check_password(self, password) -> bool:
+        return bcrypt.verify(secret=password.encode('utf-8'), hash=self.password_hash.encode(encoding='utf-8'))
 
     def __repr__(self):
-        return f"{self.username}, {self.email}, {self.password}, {self.id}"
+        return f"{self.id}: {self.username}"
 ################################################################################################
 
 # Employee Model
@@ -64,7 +67,14 @@ class Employee(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True, unique=True)
     user = db.relationship('User', backref=db.backref('employee', lazy=True))
     creation_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow())
-    
+
+    def __init__(self, name, phone, email, user, gender=1) -> None:
+        self.name: str = name
+        self.phone: str = phone
+        self.email: str = email
+        self.user = user
+        self.gender: int = gender
+
     def __repr__(self):
         return f"{self.name}"
 
@@ -229,7 +239,7 @@ def create_default_admin():
     name='Administrator2'
     phone='234567890'
     email='fake2@email.com'
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    hashed_password: str = bcrypt.hash(password.encode('utf-8'))
     admin_user = User.query.filter_by(username=username).first()
     if admin_user is None:
         # If the admin user doesn't exist, create it
