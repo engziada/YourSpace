@@ -27,14 +27,14 @@ from werkzeug.utils import secure_filename
 # mail = Mail(app)
 
 
-def download_excel(model_name):
+def download_excel(model_name) -> str:
     model = globals().get(model_name)
     if not model:
-        return None
+        return ''
 
     items = model.query.all()
     if not items:
-        return None
+        return ''
 
     data = {}
     for column in model.__table__.columns:
@@ -64,11 +64,11 @@ def download_excel(model_name):
 @app.route('/export_to_excel/<model_name>')
 @login_required
 def export_to_excel(model_name):
-    excel_file_path = download_excel(model_name)
-    excel_file_path=excel_file_path.replace('app/','')
+    excel_file_path: str = download_excel(model_name)
+    # excel_file_path=excel_file_path.replace('app/','')
     # /home/ziada/YourSpace/app/
     # print('+'*50, excel_file_path, '+'*50, sep='\n')
-    return send_file(excel_file_path, as_attachment=True, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    return send_file(path_or_file=excel_file_path, as_attachment=True, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
 
 # Login route
