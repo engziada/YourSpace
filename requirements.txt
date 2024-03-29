@@ -36,3 +36,5 @@ tzdata==2024.1
 Werkzeug==3.0.1
 WTForms==3.1.2
 WTForms-SQLAlchemy==0.4.1
+xlsxwriter==3.0.1
+
