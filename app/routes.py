@@ -65,7 +65,7 @@ def download_excel(model_name) -> str:
 @login_required
 def export_to_excel(model_name):
     excel_file_path: str = download_excel(model_name)
-    # excel_file_path=excel_file_path.replace('app/','')
+    excel_file_path=excel_file_path.replace('app/','')
     # /home/ziada/YourSpace/app/
     # print('+'*50, excel_file_path, '+'*50, sep='\n')
     return send_file(path_or_file=excel_file_path, as_attachment=True, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
