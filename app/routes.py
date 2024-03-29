@@ -50,24 +50,30 @@ def download_excel(model_name) -> str:
     excel_file_path=secure_filename(excel_file_path)
 
     # Create an ExcelWriter object
+    
     # excel_writer = pd.ExcelWriter(os.path.join('/home/ziada/YourSpace/app', excel_file_path), engine='xlsxwriter')
     excel_writer = pd.ExcelWriter(excel_file_path, engine='xlsxwriter')
     # Write the DataFrame to Excel
     df.to_excel(excel_writer, sheet_name=f'YourSpace-{model_name}', index=False)
     # Close the ExcelWriter object using close() method
     excel_writer.close()
-    print('+'*50, excel_file_path, '+'*50, sep='\n')
 
-    return excel_file_path
+    # Get the full path of the excel file
+    full_path = os.path.abspath(excel_file_path)
+    print('+'*50, full_path, '+'*50, sep='\n')
+    return full_path
 
 
 @app.route('/export_to_excel/<model_name>')
 @login_required
 def export_to_excel(model_name):
-    excel_file_path: str = download_excel(model_name)
-    excel_file_path=excel_file_path.replace('app/','')
-    print('+'*50, excel_file_path, '+'*50, sep='\n')
-    return send_file(path_or_file=excel_file_path, as_attachment=True, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    file_path: str = download_excel(model_name).replace("app/", "")
+    print("+" * 50, file_path, "+" * 50, sep="\n")
+    return send_file(
+        path_or_file=file_path,
+        as_attachment=True,
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
 
 
 # Login route
