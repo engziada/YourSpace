@@ -1,6 +1,6 @@
 import os
 import pytz
-from sqlalchemy import and_, func,asc,desc
+from sqlalchemy import and_, desc,text
 from app import app, db
 from app.forms import * 
 from app.models import *
@@ -11,10 +11,11 @@ from .helpers import calculate_time_difference, generate_password, flash_errors,
 import pandas as pd
 from app.decorators import admin_required
 import plotly.express as px
-import plotly.graph_objects as go
-import plotly.io as pio
+# import plotly.graph_objects as go
+# import plotly.io as pio
 from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
+from icecream import ic
 
 
 # app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -529,7 +530,6 @@ def add_customer():
     return render_template('add_customer.html', form=form)
 
 
-
 # Edit customer route
 @app.route('/edit_customer/<int:customer_id>', methods=['GET', 'POST'])
 @login_required
@@ -617,7 +617,6 @@ def add_customer_external():
             session['add_customer_external'] = request.form
             return render_template('add_customer_external.html', form=form)
     return render_template('add_customer_external.html', form=form)
-
 
 
 @app.route('/get_institutes/<int:job_id>', methods=['GET'])
@@ -998,7 +997,10 @@ def add_log():
             # Define the fixed timezone (GMT+3)
             fixed_timezone = pytz.timezone('Asia/Riyadh')
             # Get the current datetime in the fixed timezone
-            current_time = datetime.now(fixed_timezone)
+            # current_time = datetime.now().astimezone(fixed_timezone)
+            current_time_utc = datetime.now(pytz.utc)  # Create a timezone-aware datetime object in UTC
+            current_time = current_time_utc.astimezone(fixed_timezone)  # Convert to local timezone
+            ic(current_time)
             
             sel_customer = Customer.query.filter_by(id=form.customer_id.data).first()
             existing_log = Log.query.filter_by(customer=sel_customer, is_active=True).first()
@@ -1006,7 +1008,7 @@ def add_log():
                 flash(f'Error: Customer already registered in another space ({existing_log.space.name})', 'danger')
                 session['add_log'] = request.form
                 return redirect(url_for('logs'))
-        
+            
             new_log = Log(
                 space=form.space.data,
                 customer=sel_customer,
@@ -1015,10 +1017,10 @@ def add_log():
                 start_time=current_time,
                 package=form.package.data,
                 use_subscription=form.use_subscription.data
-
             )
             db.session.add(new_log)
             db.session.commit()
+                
             return redirect(url_for('logs'))
     else:
         session['add_log'] = request.form
@@ -1066,12 +1068,15 @@ def checkout(log_id:int):
 
     # Get data from the log
     start_time=log.start_time
+    ic(start_time)
     # Define the fixed timezone (GMT+3)
     fixed_timezone = pytz.timezone('Asia/Riyadh')
     # Get the current datetime in the fixed timezone
     current_time = datetime.now(fixed_timezone)
+    ic(current_time)
     # Convert offset-naive previous_time to offset-aware
-    previous_time = fixed_timezone.localize(start_time)
+    previous_time = start_time # fixed_timezone.localize(start_time)
+    ic(previous_time)
 
     diff = current_time - previous_time
     # hours = round(diff / timedelta(hours=1), 2)

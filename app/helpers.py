@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import random
 import string
+from turtle import st
 from typing import LiteralString
 from flask import flash
 import pandas as pd
@@ -14,8 +15,10 @@ def calculate_time_difference(start_time: datetime):
     # Get the current datetime in the fixed timezone
     current_time = datetime.now(fixed_timezone)
     # Convert offset-naive previous_time to offset-aware
-    previous_time = fixed_timezone.localize(start_time)
-    
+    # previous_time = fixed_timezone.localize(start_time)
+    # previous_time = start_time.astimezone(fixed_timezone)
+    previous_time=start_time
+
     # try:
     # start_time_str= start_time.strftime('%Y-%m-%d %H:%M:%S')
     # start_time = datetime.strptime(start_time_str, '%Y-%m-%d %H:%M:%S')

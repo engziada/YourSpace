@@ -35,8 +35,8 @@
                 <td>{{ log.employee.name }}</td>
                 <td>{{ log.customer.name }}</td>
                 <td>{{ log.package.name }}</td>
-                <td>{{ log.start_time}}</td>
-                <td>{{ log.end_time}}</td>
+                <td>{{ log.start_time.strftime("%Y-%m-%d %H:%M") if log.start_time else "" }}</td>
+                <td>{{ log.end_time.strftime("%Y-%m-%d %H:%M") if log.end_time else "" }}</td>
                 {% if log.period %}
                     <td>
                         {{ log.period }}

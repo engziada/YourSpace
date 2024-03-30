@@ -184,8 +184,8 @@ class Subscription(db.Model):
 class Log(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     is_active = db.Column(db.Boolean, nullable=False, default=True)
-    start_time = db.Column(db.DateTime, nullable=False)
-    end_time = db.Column(db.DateTime, nullable=True)
+    start_time = db.Column(db.DateTime(timezone=True), nullable=False)
+    end_time = db.Column(db.DateTime(timezone=True), nullable=True)
     period = db.Column(db.String(50), nullable=True)
     total_price = db.Column(db.Float, nullable=True)
     space_id = db.Column(db.Integer, db.ForeignKey('space.id'), nullable=False)
