@@ -8,6 +8,7 @@ import pandas as pd
 import pytz
 from werkzeug.utils import secure_filename
 import os
+from icecream import ic
 
 def calculate_time_difference(start_time: datetime):
     # Define the fixed timezone (GMT+3)
@@ -31,27 +32,29 @@ def calculate_time_difference(start_time: datetime):
 
 
 def calculate_time_remaining(start_time: datetime, last_time_remaining: float):
-    # Define the fixed timezone (GMT+3)
-    fixed_timezone = pytz.timezone('Asia/Riyadh')
-    # Get the current datetime in the fixed timezone
-    current_time = datetime.now(fixed_timezone)
-    # Convert offset-naive previous_time to offset-aware
-    previous_time = fixed_timezone.localize(start_time)
-    
-    # try:
-    # start_time_str= start_time.strftime('%Y-%m-%d %H:%M:%S')
-    # start_time = datetime.strptime(start_time_str, '%Y-%m-%d %H:%M:%S')
-    diff = current_time - previous_time
-    minutes = round(diff / timedelta(minutes=1), 0)
+    try:
+        # Define the fixed timezone (GMT+3)
+        fixed_timezone = pytz.timezone('Asia/Riyadh')
+        # Get the current datetime in the fixed timezone
+        current_time_utc = datetime.now(pytz.utc)  # Create a timezone-aware datetime object in UTC
+        current_time = current_time_utc.astimezone(fixed_timezone)  # Convert to local timezone
+        # Convert offset-naive previous_time to offset-aware
+        # previous_time = fixed_timezone.localize(start_time)
+        previous_time=start_time
+        # start_time_str= start_time.strftime('%Y-%m-%d %H:%M:%S')
+        # start_time = datetime.strptime(start_time_str, '%Y-%m-%d %H:%M:%S')
+        diff = current_time - previous_time
+        minutes = round(diff / timedelta(minutes=1), 0)
+            
+        cur_rem_minutes = float(last_time_remaining * 60)
+        new_rem_minutes = cur_rem_minutes - minutes
+        new_rem_hours_part = int(new_rem_minutes // 60)
+        new_rem_minutes_part= int(new_rem_minutes % 60)
         
-    cur_rem_minutes = float(last_time_remaining * 60)
-    new_rem_minutes = cur_rem_minutes - minutes
-    new_rem_hours_part = int(new_rem_minutes // 60)
-    new_rem_minutes_part= int(new_rem_minutes % 60)
-        
-    return f'{new_rem_hours_part}h {new_rem_minutes_part}m', new_rem_minutes / 60
-    # except:
-    #     return '0h 0m'
+        return f'{new_rem_hours_part}h {new_rem_minutes_part}m', new_rem_minutes / 60
+    except Exception as e:
+        ic(e)
+        return '0h 0m',0
 
 
 # Generate Random Password
