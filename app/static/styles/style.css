@@ -289,19 +289,7 @@ footer a {
     width: 60%;
 }
 
-.table-responsive {
-    overflow-x: auto;
-    max-width: 100%;
-    table-layout: fixed;
-    width: 100%;
-}
 
-th,
-td {
-    white-space: nowrap;
-    width: 50%;
-    text-align: center;
-}
 
 .sub_table_title {
     font-size: 1.5em;
@@ -368,4 +356,22 @@ td {
         max-width: 90%;
         margin: auto;
     }
+}
+
+/* Grid container for full-width tables */
+.grid-container {
+    width: 100%;
+    overflow-x: auto; /* Fallback for very wide content */
+}
+
+.grid-container .table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.grid-container .table th,
+.grid-container .table td {
+    word-wrap: break-word;
+    white-space: normal !important; /* Ensure wrapping */
+    text-align: center;
 }

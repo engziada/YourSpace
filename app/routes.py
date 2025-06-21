@@ -573,6 +573,28 @@ def delete_customer(customer_id):
     except:
         flash('Error: Customer cannot be deleted!', 'danger')
         return redirect(url_for('customers'))
+
+
+@app.route('/edit_customer_form/<int:customer_id>')
+@login_required
+@admin_required
+def edit_customer_form(customer_id):
+    ic(f"Attempting to load edit form for customer_id: {customer_id}")
+    try:
+        customer = Customer.query.get_or_404(customer_id)
+        form = EditCustomerForm(obj=customer)
+        if customer.gender == 'Male':
+            form.gender.data = 1
+        elif customer.gender == 'Female':
+            form.gender.data = 2
+
+        if customer.subscription:
+            form.remaining.data = customer.subscription_remaining
+        ic(f"Successfully created form for customer: {customer.name}")
+        return render_template('_edit_customer_form.html', form=form, customer=customer)
+    except Exception as e:
+        ic(f"ERROR in edit_customer_form: {str(e)}")
+        return jsonify({'error': 'An unexpected error occurred on the server.'}), 500
     
 
 # Add customer by customer route
