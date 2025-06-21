@@ -26,6 +26,7 @@
 </head>
 <body>
     <!-- Navbar -->
+    <div class="page-container">
     <nav class="navbar navbar-expand-lg navbar-dark dark-bg-color">
         <div class="container">
             <!-- Site name and logo -->
@@ -165,12 +166,14 @@
     </div>
 
     <!-- Content block -->
-    <div class="container mt-5 px-0 mx-auto">
-        {% block content %}
-        {% endblock %}
+    <div class="content-wrapper">
+        <div class="container mt-5 px-0 mx-auto">
+            {% block content %}
+            {% endblock %}
+        </div>
     </div>
 
-    <footer>
+    <footer class="footer">
         <div class="footer-overlay">
             <div class="footer-content">
                 <p>&copy; All rights reserved for Your Space 2023, Designed by: <a href="https://www.linkedin.com/in/MuhammadZiada" target="_blank">Muhammad Ziada</a>.</p>
@@ -183,6 +186,7 @@
 
     {% block scripts %}
     {% endblock %}
+</div>
 </body>
 
 </html>

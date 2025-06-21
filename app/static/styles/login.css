@@ -1,17 +1,17 @@
-/* styles.css */
-/* ... other styles ... */
+/* login.css */
 
-/* Translucent box styling */
 .translucent-box {
-    background-color: rgba(255, 255, 255, 0.9);
-    /* Use rgba to set transparency */
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    /* Adjust the max width as needed */
-    margin: 0 auto;
-    /* Center the box horizontally */
+    /* Glassmorphism effect */
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* For Safari */
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    
+    padding: 40px;
+    max-width: 450px;
+    margin: 50px auto;
 }
 
 .logo {
@@ -23,35 +23,68 @@
     text-align: center;
 }
 
+.login-form h2 {
+    color: #0B3571;
+    margin-bottom: 25px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
 /* Input styling */
 .input-group {
     position: relative;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .input-icon {
     position: absolute;
-    left: 10px;
+    left: 15px;
     top: 50%;
     transform: translateY(-50%);
+    color: #333;
 }
 
 input[type="text"],
 input[type="password"] {
     width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    padding-left: 40px;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 12px;
+    padding-left: 45px;
+    color: #333;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    background: rgba(255, 255, 255, 0.8);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(251, 69, 23, 0.5);
+}
+
+input[type="text"]::placeholder,
+input[type="password"]::placeholder {
+    color: rgba(0, 0, 0, 0.4);
 }
 
 button {
-    background-color: #007BFF;
+    background: #FB4517;
     color: #fff;
     border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
+    border-radius: 8px;
+    padding: 12px 20px;
     cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
 }
 
-/* ... other styles ... */
+button:hover {
+    background: #0B3571;
+    box-shadow: 0 4px 15px rgba(11, 53, 113, 0.4);
+    transform: translateY(-2px);
+}
