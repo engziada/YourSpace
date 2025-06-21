@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 import random
 import string
-from turtle import st
 from typing import LiteralString
 from flask import flash
 import pandas as pd
