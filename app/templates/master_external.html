@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{% block title %}Your Space{% endblock %}</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+
+    {% block styles %}
+    {% endblock %}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.5/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+    {% block header_scripts %}
+    {% endblock %}
+
+</head>
+<body>
+    <div class="page-container">
+    <nav class="navbar navbar-expand-lg navbar-dark dark-bg-color">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img class="site-logo" src="/static/images/logo.png" alt="Logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('about') }}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>Find Your Focus at Your Space</h1>
+            <p>The perfect environment for productivity and creativity.</p>
+        </div>
+    </div>
+
+    <!-- Amenities Section -->
+    <div class="amenities-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 amenity-item">
+                    <i class="fas fa-wifi"></i>
+                    <h5>High-Speed Wi-Fi</h5>
+                </div>
+                <div class="col-md-3 amenity-item">
+                    <i class="fas fa-coffee"></i>
+                    <h5>Unlimited Coffee & Tea</h5>
+                </div>
+                <div class="col-md-3 amenity-item">
+                    <i class="fas fa-user-friends"></i>
+                    <h5>Collaborative Community</h5>
+                </div>
+                <div class="col-md-3 amenity-item">
+                    <i class="fas fa-lock"></i>
+                    <h5>Secure 24/7 Access</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flash messages -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            <div class="container">
+                {% for category,message in messages %}
+                    <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endwith %}
+    </div>
+
+    <!-- Content block -->
+    <div class="content-wrapper">
+        <div class="container mt-5 px-0 mx-auto">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-overlay">
+            <div class="footer-content">
+                <p>&copy; All rights reserved for Your Space 2023, Designed by: <a href="https://www.linkedin.com/in/MuhammadZiada" target="_blank">Muhammad Ziada</a>.</p>
+            </div>
+        </div>
+    </footer>
+
+    {% block scripts %}
+    {% endblock %}
+</div>
+</body>
+</html>

@@ -6,7 +6,7 @@
 {% block content %}
     <h1>Subscriptions Management</h1>
 
-    <div class="grid-container">
+    <div class="table-responsive">
         <table class="table table-striped">
         <thead>
             <tr>
@@ -28,9 +28,15 @@
                 <td>{{ subscription.is_active }}</td>
                 <td>
                     <!-- Add the links to edit and delete users -->
-                    <a href="{{ url_for('subscription_details', subscription_id=subscription.id) }}">Details</a> |
-                    <a href="{{ url_for('edit_subscription', subscription_id=subscription.id) }}">Edit</a> |
-                    <a href="{{ url_for('delete_subscription', subscription_id=subscription.id) }}">Delete</a>
+                    <a href="{{ url_for('subscription_details', subscription_id=subscription.id) }}" title="Subscription Details">
+                        <span class="material-symbols-outlined">info</span>
+                    </a>
+                    <a href="#" class="edit-subscription-btn" data-toggle="modal" data-target="#editSubscriptionModal" data-subscription-id="{{ subscription.id }}" title="Edit Subscription">
+                        <span class="material-symbols-outlined">edit</span>
+                    </a>
+                    <a href="{{ url_for('delete_subscription', subscription_id=subscription.id) }}" onclick="return confirm('Are you sure you want to delete this subscription?');" title="Delete Subscription">
+                        <span class="material-symbols-outlined">delete</span>
+                    </a>
                 </td>
             </tr>
             {% endfor %}
@@ -40,4 +46,52 @@
 
     <!-- Add new user link -->
     <a href="{{ url_for('add_subscription') }}" class="btn btn-primary">Add New Subscription</a>
+
+<!-- Edit Subscription Modal -->
+<div class="modal fade" id="editSubscriptionModal" tabindex="-1" role="dialog" aria-labelledby="editSubscriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editSubscriptionModalLabel">Edit Subscription</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Form will be loaded here by JavaScript -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        // Handle the modal display for editing a subscription
+        $('#editSubscriptionModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var subscriptionId = button.data('subscription-id'); // Extract info from data-* attributes
+            var modal = $(this);
+
+            // AJAX request to get the edit form
+            $.ajax({
+                url: '/edit_subscription_form/' + subscriptionId,
+                type: 'GET',
+                success: function (response) {
+                    modal.find('.modal-body').html(response);
+                },
+                error: function (xhr, status, error) {
+                    var errorMessage = 'Error loading subscription data. ';
+                    if (xhr.responseJSON && xhr.responseJSON.error) {
+                        errorMessage += xhr.responseJSON.error;
+                    } else {
+                        errorMessage += 'Please try again later.';
+                    }
+                    modal.find('.modal-body').html('<div class="alert alert-danger">' + errorMessage + '</div>');
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

@@ -6,7 +6,7 @@
 {% block content %}
     <h1>Pricing Rules Management</h1>
 
-    <div class="grid-container">
+    <div class="table-responsive">
         <table class="table table-striped">
         <thead>
             <tr>
@@ -28,8 +28,12 @@
                 <td>{{ pricing_rule.package.name }}</td>
                 <td>
                     <!-- Add the links to edit and delete users -->
-                    <a href="{{ url_for('edit_pricing_rule', pricing_rule_id=pricing_rule.id) }}">Edit</a> |
-                    <a href="{{ url_for('delete_pricing_rule', pricing_rule_id=pricing_rule.id) }}">Delete</a>
+                    <a href="#" class="edit-pricing-rule-btn" data-toggle="modal" data-target="#editPricingRuleModal" data-pricing-rule-id="{{ pricing_rule.id }}" title="Edit Pricing Rule">
+                        <span class="material-symbols-outlined">edit</span>
+                    </a>
+                    <a href="{{ url_for('delete_pricing_rule', pricing_rule_id=pricing_rule.id) }}" onclick="return confirm('Are you sure you want to delete this pricing rule?');" title="Delete Pricing Rule">
+                        <span class="material-symbols-outlined">delete</span>
+                    </a>
                 </td>
             </tr>
             {% endfor %}
@@ -39,4 +43,52 @@
 
     <!-- Add new user link -->
     <a href="{{ url_for('add_pricing_rule') }}" class="btn btn-primary">Add New Pricing Rule</a>
+
+<!-- Edit Pricing Rule Modal -->
+<div class="modal fade" id="editPricingRuleModal" tabindex="-1" role="dialog" aria-labelledby="editPricingRuleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editPricingRuleModalLabel">Edit Pricing Rule</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Form will be loaded here by JavaScript -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        // Handle the modal display for editing a pricing rule
+        $('#editPricingRuleModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var pricingRuleId = button.data('pricing-rule-id'); // Extract info from data-* attributes
+            var modal = $(this);
+
+            // AJAX request to get the edit form
+            $.ajax({
+                url: '/edit_pricing_rule_form/' + pricingRuleId,
+                type: 'GET',
+                success: function (response) {
+                    modal.find('.modal-body').html(response);
+                },
+                error: function (xhr, status, error) {
+                    var errorMessage = 'Error loading pricing rule data. ';
+                    if (xhr.responseJSON && xhr.responseJSON.error) {
+                        errorMessage += xhr.responseJSON.error;
+                    } else {
+                        errorMessage += 'Please try again later.';
+                    }
+                    modal.find('.modal-body').html('<div class="alert alert-danger">' + errorMessage + '</div>');
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

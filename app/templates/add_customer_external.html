@@ -1,115 +1,176 @@
 <!-- templates/add_user.html -->
-{% extends 'master.html' %}
+{% extends 'master_external.html' %}
 
 {% block title %}Self-Registeration | Your Space{% endblock %}
 
 {% block content %}
-    <div class="container mt-5">
-        <h1>Register Yourself</h1>
-        <form method="post" enctype="multipart/form-data">
-            {{ form.hidden_tag() }}
-            <div class="form-group">
-                {{ form.name.label(class="mandatory")}} {{ form.name(class="form-control") }}
-                {% if form.name.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.name.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                {% endif %}
+        <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-lg translucent-card">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h3>Register Yourself</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" enctype="multipart/form-data" id="customer-form" novalidate>
+                            {{ form.hidden_tag() }}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        {{ form.name.label(class="mandatory") }}
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                            </div>
+                                            {{ form.name(class="form-control", placeholder="Enter your full name") }}
+                                        </div>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        {{ form.phone.label(class="mandatory") }}
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                            </div>
+                                            {{ form.phone(class="form-control", placeholder="Enter your phone number") }}
+                                        </div>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                {{ form.email.label(class="mandatory") }}
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    </div>
+                                    {{ form.email(class="form-control", placeholder="Enter your email address") }}
+                                </div>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        {{ form.job.label }}
+                                        {{ form.job(class="form-control", id='job-select') }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group" id="institute-div" style="display: none;">
+                                        {{ form.institute.label }}
+                                        {{ form.institute(class="form-control", id='institute-select') }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                {{ form.gender.label }}
+                                {{ form.gender(class="form-control") }}
+                            </div>
+                            <div class="form-group text-center">
+                                <button type="submit" class="btn btn-primary btn-block">Register</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                {{ form.phone.label(class="mandatory") }} {{ form.phone(class="form-control") }}
-                {% if form.phone.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.phone.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                {{ form.email.label(class="mandatory") }} {{ form.email(class="form-control") }}
-                {% if form.email.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.email.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                {{ form.job.label }} {{ form.job(class="form-control", id='job-select') }}
-                {% if form.job.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.job.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                {{ form.institute.label }} {{ form.institute(class="form-control", id='institute-select') }}
-                {% if form.institute.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.institute.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                {{ form.gender.label }} {{ form.gender(class="form-control") }}
-                {% if form.gender.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.gender.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Add Customer" class="btn btn-primary">
-            </div>
-        </form>
+        </div>
     </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    const jobField = document.getElementById('job');
-    const instituteField = document.getElementById('institute');
-    const instituteDiv = document.getElementById('institute-div');
-    jobField.addEventListener('change', function() {
-        if (jobField !== null){
-        <!-- window.alert(jobField.value); -->
-        if (jobField.value == 1) {
-            instituteDiv.style.display = 'block';
-        } else {
-            instituteDiv.style.display = 'none';
-        }
-    }
-    });
-</script>
-<script>
-    // Fetch Institutes based on selected Job
-    document.getElementById('job-select').addEventListener('change', function() {
-        var jobId = this.value;
-        var instituteSelect = document.getElementById('institute-select');
-        instituteSelect.innerHTML = ''; // Clear existing options
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('customer-form');
+        const nameField = document.getElementById('name');
+        const phoneField = document.getElementById('phone');
+        const emailField = document.getElementById('email');
+        const jobField = document.getElementById('job-select');
+        const instituteDiv = document.getElementById('institute-div');
+        const instituteSelect = document.getElementById('institute-select');
 
-        if (jobId) {
+        // --- Field Validation ---
+        function validateField(field, condition, message) {
+            const feedback = field.parentElement.parentElement.querySelector('.invalid-feedback');
+            if (condition) {
+                field.classList.remove('is-invalid');
+                feedback.textContent = '';
+                return true;
+            } else {
+                field.classList.add('is-invalid');
+                feedback.textContent = message;
+                return false;
+            }
+        }
+
+        nameField.addEventListener('input', () => {
+            validateField(nameField, nameField.value.length >= 4 && nameField.value.length <= 20, 'Name must be between 4 and 20 characters.');
+        });
+
+        phoneField.addEventListener('input', () => {
+            // Basic phone validation (e.g., starts with 01 and has 11 digits)
+            validateField(phoneField, /^01[0-9]{9}$/.test(phoneField.value), 'Please enter a valid 11-digit phone number.');
+        });
+
+        emailField.addEventListener('input', () => {
+            // Basic email validation
+            validateField(emailField, /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(emailField.value), 'Please enter a valid email address.');
+        });
+
+        // --- Form Submission ---
+        form.addEventListener('submit', function (event) {
+            const isNameValid = validateField(nameField, nameField.value.length >= 4 && nameField.value.length <= 20, 'Name must be between 4 and 20 characters.');
+            const isPhoneValid = validateField(phoneField, /^01[0-9]{9}$/.test(phoneField.value), 'Please enter a valid 11-digit phone number.');
+            const isEmailValid = validateField(emailField, /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(emailField.value), 'Please enter a valid email address.');
+
+            if (!isNameValid || !isPhoneValid || !isEmailValid) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        });
+
+        // --- Dynamic Institute Field ---
+        function handleJobChange() {
+            const selectedOption = jobField.options[jobField.selectedIndex];
+            if (!selectedOption) return;
+
+            const jobId = selectedOption.value;
+            const jobName = selectedOption.text.trim();
+
+            // Show institute field only if the selected job is 'Student'
+            if (jobName === 'Student') {
+                instituteDiv.style.display = 'block';
+                fetchInstitutes(jobId);
+            } else {
+                instituteDiv.style.display = 'none';
+                instituteSelect.innerHTML = '';
+            }
+        }
+
+        jobField.addEventListener('change', handleJobChange);
+
+        function fetchInstitutes(jobId) {
+            instituteSelect.innerHTML = '<option value="">Loading...</option>';
             fetch('/get_institutes/' + jobId)
                 .then(response => response.json())
                 .then(data => {
-                    data.forEach(function(institute) {
+                    instituteSelect.innerHTML = '<option value="">Select Institute</option>';
+                    data.forEach(function (institute) {
                         var option = document.createElement('option');
                         option.value = institute.id;
                         option.textContent = institute.name;
                         instituteSelect.appendChild(option);
                     });
+                })
+                .catch(error => {
+                    console.error('Error fetching institutes:', error);
+                    instituteSelect.innerHTML = '<option value="">Could not load institutes</option>';
                 });
         }
+
+        // Initial check in case the form is pre-filled
+        handleJobChange();
     });
 </script>
 {% endblock %}

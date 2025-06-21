@@ -1,40 +1,60 @@
-<!-- templates/add_user.html -->
 {% extends 'master.html' %}
 
 {% block title %}Package Details | Your Space{% endblock %}
 
 {% block content %}
-    <div class="container mt-5">
-        <h1>Package Details</h1>
-        <form method="post" enctype="multipart/form-data">
-            {{ form.hidden_tag() }}
-            <div class="form-group">
-                {{ form.name.label }} {{ form.name(class="form-control") }}
-            </div>
-            <div class="form-group">
-                {{ form.description.label }} {{ form.description(class="form-control") }}
-            </div>
-        </form>
-
-        <hr>
-        <div class="table-container">
-            <a class="sub_table_title">Pricing Rules</a>
-            <table class="">
-                <tr class="table-row">
-                    <th>Rule ID</th>
-                    <th>From</th>
-                    <th>To</th>
-                    <th>Cost</th>
-                </tr>
-                {% for pricing_rule in package.pricing_rules %}
-                <tr class="table-row">
-                    <td>{{ pricing_rule.id }}</td>
-                    <td>{{ pricing_rule.from_ }}</td>
-                    <td>{{ pricing_rule.to_ }}</td>
-                    <td>{{ pricing_rule.hourly_rate }}</td>
-                </tr>
-                {% endfor %}
-            </table>
+<div class="container">
+    <h1>Package Details: {{ package.name }}</h1>
+    <div class="card">
+        <div class="card-body">
+            <form>
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.name.label(class="form-control-label") }}
+                    {{ form.name(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.description.label(class="form-control-label") }}
+                    {{ form.description(class="form-control", rows=5) }}
+                </div>
+                <div class="form-check">
+                    {{ form.is_active(class="form-check-input") }}
+                    {{ form.is_active.label(class="form-check-label") }}
+                </div>
+            </form>
         </div>
     </div>
+
+    <hr>
+
+    <h2>Active Customers Using This Package</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+                <tr>
+                    <td>{{ customer.id }}</td>
+                    <td>{{ customer.name }}</td>
+                    <td>{{ customer.phone }}</td>
+                    <td>{{ customer.email }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4">No active customers are using this package.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <a href="{{ url_for('packages') }}" class="btn btn-secondary">Back to Packages</a>
+</div>
 {% endblock %}

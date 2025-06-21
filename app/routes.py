@@ -238,21 +238,8 @@ def dashboard():
     total_reservations = Log.query.count()
     active_reservations = Log.query.filter_by(is_active=True).count()
 
-    # Chart (1): Gender Distribution
-    gender_data = db.session.query(Customer.gender, db.func.count().label('count')).group_by(Customer.gender).all()
-    df = pd.DataFrame(gender_data, columns=['Gender', 'Count'])
-    fig = px.pie(df, values='Count', names='Gender', title='Gender Distribution')
-    gender_distribution_chart_div = fig.to_html(full_html=False)
-
-    # Chart (2): Job Distribution
-    query = db.session.query(Job.name, Institute.name, db.func.count().label('count'))\
-        .join(Customer, Customer.job_id == Job.id)\
-        .join(Institute, Customer.institute_id == Institute.id)\
-        .group_by(Job.name, Institute.name).all()
-    df = pd.DataFrame(query, columns=['Job', 'Institute', 'Count'])
-    fig = px.bar(df, x='Job', y='Count', color='Institute',title='Job and Institute Distribution', labels={'Job': 'Job Name'})
-    job_institute_chart_div = fig.to_html(full_html=False)
-
+    chart1 = None # Placeholder for removed chart
+    chart2 = None # Placeholder for removed chart
     # Chart (3): Subscription Distribution
     # subscription_data = db.session.query(
     #     (datetime.now() - Customer.subscription_startdate).label('duration')).filter(Customer.subscription_startdate.isnot(None)).all()
@@ -338,23 +325,21 @@ def dashboard():
 
 
 
-    return render_template('dashboard.html', 
-                        chart1=gender_distribution_chart_div,
-                        chart2=job_institute_chart_div,
-                        chart3=subscriptions_per_month_chart_div,
-                        chart4=customer_growth_chart_div,
-                        chart5=usage_chart_div,
-                        chart6=revenue_chart,
-                        chart7=customer_behavior_chart,
-                        chart8=package_chart,
-                        chart9=subscription_chart,
-                        # New stat cards
-                        total_customers=total_customers,
-                        total_revenue=total_revenue,
-                        active_subscriptions=active_subscriptions,
-                        total_reservations=total_reservations,
-                        active_reservations=active_reservations
-                        )
+    return render_template(
+        'dashboard.html',
+        total_customers=total_customers,
+        total_revenue=total_revenue,
+        active_subscriptions=active_subscriptions,
+        total_reservations=total_reservations,
+        active_reservations=active_reservations,
+        chart3=subscriptions_per_month_chart_div,
+        chart4=customer_growth_chart_div,
+        chart5=usage_chart_div,
+        chart6=revenue_chart,
+        chart7=customer_behavior_chart,
+        chart8=package_chart,
+        chart9=subscription_chart
+    )
 
 ############################################################################################################
 # Add user route
@@ -437,6 +422,33 @@ def edit_user(user_id):
     else:
         session['edit_user'] = request.form
         return render_template('edit_user.html', form=form, employee=employee)
+
+
+@app.route('/edit_user_form/<int:user_id>')
+@login_required
+@admin_required
+def edit_user_form(user_id):
+    ic(f"Attempting to load edit form for user_id: {user_id}")
+    try:
+        employee = Employee.query.filter_by(user_id=user_id).first_or_404()
+        user = User.query.get_or_404(user_id)
+        form = EditUserForm(obj=employee)
+
+        # Manually set the is_admin checkbox value from the User model
+        form.is_admin.data = user.is_admin
+
+        # The gender in the form is a SelectField with choices (1, 'Male'), (2, 'Female')
+        # The gender in the database is a string 'Male' or 'Female'
+        if employee.gender == 'Male':
+            form.gender.data = 1
+        elif employee.gender == 'Female':
+            form.gender.data = 2
+
+        ic(f"Successfully created form for user: {employee.name}")
+        return render_template('_edit_user_form.html', form=form, employee=employee)
+    except Exception as e:
+        ic(f"ERROR in edit_user_form: {str(e)}")
+        return jsonify({'error': 'An unexpected error occurred on the server.'}), 500
 
 
 # Delete user route
@@ -706,6 +718,21 @@ def edit_space(space_id):
         return render_template('edit_space.html', form=form, space=space)
 
 
+@app.route('/edit_space_form/<int:space_id>')
+@login_required
+@admin_required
+def edit_space_form(space_id):
+    ic(f"Attempting to load edit form for space_id: {space_id}")
+    try:
+        space = Space.query.get_or_404(space_id)
+        form = EditSpaceForm(obj=space)
+        ic(f"Successfully created form for space: {space.name}")
+        return render_template('_edit_space_form.html', form=form, space=space)
+    except Exception as e:
+        ic(f"ERROR in edit_space_form: {str(e)}")
+        return jsonify({'error': 'An unexpected error occurred on the server.'}), 500
+
+
 # Delete Space route
 @app.route('/delete_space/<int:space_id>', methods=['GET', 'POST'])
 @login_required
@@ -769,6 +796,21 @@ def edit_package(package_id):
         return render_template('edit_package.html', form=form, package=package)
 
 
+@app.route('/edit_package_form/<int:package_id>')
+@login_required
+@admin_required
+def edit_package_form(package_id):
+    ic(f"Attempting to load edit form for package_id: {package_id}")
+    try:
+        package = Package.query.get_or_404(package_id)
+        form = EditPackageForm(obj=package)
+        ic(f"Successfully created form for package: {package.name}")
+        return render_template('_edit_package_form.html', form=form, package=package)
+    except Exception as e:
+        ic(f"ERROR in edit_package_form: {str(e)}")
+        return jsonify({'error': 'An unexpected error occurred on the server.'}), 500
+
+
 # Delete Package route
 @app.route('/delete_package/<int:package_id>', methods=['GET', 'POST'])
 @login_required
@@ -790,12 +832,9 @@ def delete_package(package_id):
 @login_required
 def package_details(package_id):
     package = Package.query.get_or_404(package_id)
-
-    form = PackageDetailsForm()
-    form.name.data = package.name
-    form.description.data = package.description
-
-    return render_template('details_package.html', form=form, package=package)
+    form = PackageDetailsForm(obj=package)
+    customers = Customer.query.join(Log).filter(Log.package_id == package.id, Log.is_active == True).all()
+    return render_template('details_package.html', form=form, package=package, customers=customers)
 
 ############################################################################################################
 
@@ -856,6 +895,21 @@ def edit_subscription(subscription_id):
     else:
         session['edit_subscription'] = request.form
         return render_template('edit_subscription.html', form=form, subscription=subscription)
+
+
+@app.route('/edit_subscription_form/<int:subscription_id>')
+@login_required
+@admin_required
+def edit_subscription_form(subscription_id):
+    ic(f"Attempting to load edit form for subscription_id: {subscription_id}")
+    try:
+        subscription = Subscription.query.get_or_404(subscription_id)
+        form = EditSubscriptionForm(obj=subscription)
+        ic(f"Successfully created form for subscription: {subscription.name}")
+        return render_template('_edit_subscription_form.html', form=form, subscription=subscription)
+    except Exception as e:
+        ic(f"ERROR in edit_subscription_form: {str(e)}")
+        return jsonify({'error': 'An unexpected error occurred on the server.'}), 500
 
 
 # Delete Subscription route
@@ -970,7 +1024,22 @@ def edit_pricing_rule(pricing_rule_id):
         return redirect(url_for('pricing_rules'))
     else:
         session['edit_pricing_rule'] = request.form
-        return render_template('edit_pricing_rule.html', form=form)
+        return render_template('edit_pricing_rule.html', form=form, pricing_rule=pricing_rule)
+
+
+@app.route('/edit_pricing_rule_form/<int:pricing_rule_id>')
+@login_required
+@admin_required
+def edit_pricing_rule_form(pricing_rule_id):
+    ic(f"Attempting to load edit form for pricing_rule_id: {pricing_rule_id}")
+    try:
+        pricing_rule = PricingRule.query.get_or_404(pricing_rule_id)
+        form = EditPriceingRuleForm(obj=pricing_rule)
+        ic(f"Successfully created form for pricing_rule: {pricing_rule.id}")
+        return render_template('_edit_pricing_rule_form.html', form=form, pricing_rule=pricing_rule)
+    except Exception as e:
+        ic(f"ERROR in edit_pricing_rule_form: {str(e)}")
+        return jsonify({'error': 'An unexpected error occurred on the server.'}), 500
 
 
 # Delete Pricing Rules route
@@ -1289,6 +1358,21 @@ def edit_job(job_id):
         return render_template('edit_job.html', form=form)
 
 
+@app.route('/edit_job_form/<int:job_id>')
+@login_required
+@admin_required
+def edit_job_form(job_id):
+    ic(f"Attempting to load edit form for job_id: {job_id}")
+    try:
+        job = Job.query.get_or_404(job_id)
+        form = JobForm(obj=job)
+        ic(f"Successfully created form for job: {job.name}")
+        return render_template('_edit_job_form.html', form=form, job=job)
+    except Exception as e:
+        ic(f"ERROR in edit_job_form: {str(e)}")
+        return jsonify({'error': 'An unexpected error occurred on the server.'}), 500
+
+
 # Delete Job route
 @app.route('/delete_job/<int:job_id>', methods=['GET', 'POST'])
 @login_required
@@ -1339,6 +1423,21 @@ def edit_institute(institute_id):
         return render_template('edit_institute.html', form=form)
 
 
+@app.route('/edit_institute_form/<int:institute_id>')
+@login_required
+@admin_required
+def edit_institute_form(institute_id):
+    ic(f"Attempting to load edit form for institute_id: {institute_id}")
+    try:
+        institute = Institute.query.get_or_404(institute_id)
+        form = InstituteForm(obj=institute)
+        ic(f"Successfully created form for institute: {institute.name}")
+        return render_template('_edit_institute_form.html', form=form, institute=institute)
+    except Exception as e:
+        ic(f"ERROR in edit_institute_form: {str(e)}")
+        return jsonify({'error': 'An unexpected error occurred on the server.'}), 500
+
+
 # Delete Institute route
 @app.route('/delete_institute/<int:institute_id>', methods=['GET', 'POST'])
 @login_required
@@ -1354,6 +1453,19 @@ def delete_institute(institute_id):
         return redirect(url_for('institutes'))
     
 ##############################################################################################################
+
+# Temporary route to restore admin privileges for admin2
+@app.route('/restore_admin')
+@login_required
+def restore_admin():
+    user = User.query.filter_by(username='admin2').first()
+    if user:
+        user.is_admin = True
+        db.session.commit()
+        flash('Admin privileges for admin2 have been restored.', 'success')
+    else:
+        flash('User admin2 not found.', 'danger')
+    return redirect(url_for('users'))
 
 @app.errorhandler(404)
 def not_found_error(error):

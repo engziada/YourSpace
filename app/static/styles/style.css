@@ -47,6 +47,7 @@ body::before {
 
 .content-wrapper {
     flex: 1;
+    padding-bottom: 5rem; /* Add padding to separate content from footer */
 }
 
 .content {
@@ -374,4 +375,69 @@ footer a {
     word-wrap: break-word;
     white-space: normal !important; /* Ensure wrapping */
     text-align: center;
+}
+
+/* Translucent Card for Forms */
+.translucent-card {
+    background-color: rgba(255, 255, 255, 0.85) !important; /* Semi-transparent white */
+    border-radius: 15px; /* Curved corners */
+    backdrop-filter: blur(5px); /* Optional: Adds a blur effect to the background */
+    -webkit-backdrop-filter: blur(5px); /* For Safari */
+}
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    height: 60vh;
+    background-image: url('https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    font-weight: bold;
+}
+
+.hero-content p {
+    font-size: 1.5rem;
+}
+
+/* Amenities Section */
+.amenities-section {
+    padding: 4rem 0;
+    background-color: #f8f9fa;
+}
+
+.amenity-item {
+    text-align: center;
+}
+
+.amenity-item .fas {
+    font-size: 3rem;
+    color: #FB4517; /* Your brand's primary color */
+    margin-bottom: 1rem;
+}
+
+.amenity-item h5 {
+    font-weight: bold;
 }

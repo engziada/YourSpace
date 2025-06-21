@@ -151,9 +151,10 @@ class PackageCreateForm(FlaskForm):
 # Edit Package Form
 class EditPackageForm(FlaskForm):
     name = StringField('Name', render_kw={'readonly': True})
-    description = TextAreaField('Description')
     is_active = BooleanField('Active', default=True)
+    description = TextAreaField('Description')
     submit = SubmitField('Save Changes')
+
 
 
 class PackageDetailsForm(FlaskForm):

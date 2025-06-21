@@ -51,16 +51,43 @@
             </div>
         </div>
     </div>
-    <div class="dashboard-charts-grid mb-5">
-        <div class="dashboard-chart">{{ chart1|safe if chart1 else '<div class=\'empty-chart\'>No gender data available</div>' }}</div>
-        <div class="dashboard-chart">{{ chart2|safe }}</div>
-        <div class="dashboard-chart">{{ chart3|safe }}</div>
-        <div class="dashboard-chart">{{ chart4|safe }}</div>
-        <div class="dashboard-chart">{{ chart5|safe }}</div>
-        <div class="dashboard-chart">{{ chart6|safe }}</div>
-        <div class="dashboard-chart">{{ chart7|safe }}</div>
-        <div class="dashboard-chart">{{ chart8|safe }}</div>
-        <div class="dashboard-chart">{{ chart9|safe }}</div>
+    <div class="row">
+        <div class="col-12 mb-3">
+            <h2 class="section-title">Performance Trends</h2>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="dashboard-chart">{{ chart5|safe }}</div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="dashboard-chart">{{ chart6|safe }}</div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 mb-3">
+            <h2 class="section-title">Revenue Analysis</h2>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="dashboard-chart">{{ chart8|safe }}</div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="dashboard-chart">{{ chart9|safe }}</div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 mb-3">
+            <h2 class="section-title">Customer Insights</h2>
+        </div>
+        <div class="col-lg-4 mb-4">
+            <div class="dashboard-chart">{{ chart3|safe }}</div>
+        </div>
+        <div class="col-lg-4 mb-4">
+            <div class="dashboard-chart">{{ chart4|safe }}</div>
+        </div>
+        <div class="col-lg-4 mb-4">
+            <div class="dashboard-chart">{{ chart7|safe }}</div>
+        </div>
     </div>
 {% endblock %}
 
@@ -90,18 +117,22 @@
 .stat-card:hover {
     box-shadow: 0 4px 24px 0 rgba(251,69,23,0.15);
 }
-.dashboard-charts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-    gap: 2.5rem;
+.section-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #0B3571;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #FB4517;
+    display: inline-block;
 }
 .dashboard-chart {
     background: #fff;
     border-radius: 1rem;
     box-shadow: 0 2px 12px 0 rgba(11,53,113,0.07);
     padding: 2.5rem 2rem 2rem 2rem;
-    margin-bottom: 2rem;
     min-height: 420px;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -111,11 +142,6 @@
     text-align: center;
     font-size: 1.2rem;
     padding: 2rem;
-}
-@media (max-width: 1200px) {
-    .dashboard-charts-grid {
-        grid-template-columns: 1fr;
-    }
 }
 </style>
 {% endblock %}
