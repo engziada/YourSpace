@@ -231,6 +231,13 @@ def logs():
 def dashboard():
     customers = Customer.query.all()
 
+    # Summary statistics for dashboard cards
+    total_customers = Customer.query.count()
+    total_revenue = db.session.query(db.func.sum(Log.total_price)).scalar() or 0
+    active_subscriptions = Customer.query.filter(Customer.subscription_id.isnot(None)).count()
+    total_reservations = Log.query.count()
+    active_reservations = Log.query.filter_by(is_active=True).count()
+
     # Chart (1): Gender Distribution
     gender_data = db.session.query(Customer.gender, db.func.count().label('count')).group_by(Customer.gender).all()
     df = pd.DataFrame(gender_data, columns=['Gender', 'Count'])
@@ -257,13 +264,12 @@ def dashboard():
     # Chart (3): Subscriptions Per Month
     subscription_data = db.session.query(
         Subscription.name,
-        db.func.DATE_FORMAT(Customer.subscription_startdate, '%b %Y').label('month'),
-        db.func.count().label('count'),
-        db.func.DATE_FORMAT(Customer.subscription_startdate, '%a %d').label('day'))\
-            .join(Customer, Customer.subscription_id == Subscription.id)\
-            .group_by(Subscription.name, 'month').all()
-    df = pd.DataFrame(subscription_data, columns=['Subscription', 'Month', 'Count','Day'])
-    fig = px.line(df, x='Month', y='Count', color='Subscription',text='Day',
+        db.func.to_char(Customer.subscription_startdate, 'Mon YYYY').label('month'),
+        db.func.count().label('count')
+    ).join(Customer, Customer.subscription_id == Subscription.id)\
+    .group_by(Subscription.name, db.func.to_char(Customer.subscription_startdate, 'Mon YYYY')).all()
+    df = pd.DataFrame(subscription_data, columns=['Subscription', 'Month', 'Count'])
+    fig = px.line(df, x='Month', y='Count', color='Subscription',
                   title='Subscriptions Per Month',
                   labels={'Month': 'Month', 'Count': 'Number of Subscriptions'})
     fig.update_traces(textposition="bottom right")
@@ -271,45 +277,29 @@ def dashboard():
 
     # Chart (4): Monthly Customer Growth
     customer_growth_data = db.session.query(
-        db.func.DATE_FORMAT(Customer.creation_date, '%b %Y').label('month'),
-        db.func.count().label('count'),
-        db.func.DATE_FORMAT(Customer.creation_date, '%a %d').label('day')
+        db.func.to_char(Customer.creation_date, 'Mon YYYY').label('month'),
+        db.func.count().label('count')
     ).group_by('month').order_by('month').all()
-    df = pd.DataFrame(customer_growth_data, columns=['Month', 'Customer Count','Day'])
-    fig = px.line(df, x='Month', y='Customer Count',text='Day', title='Monthly Customer Growth',
+    df = pd.DataFrame(customer_growth_data, columns=['Month', 'Customer Count'])
+    fig = px.line(df, x='Month', y='Customer Count', title='Monthly Customer Growth',
                   labels={'Month': 'Month', 'Customer Count': 'Number of Customers'})
     fig.update_traces(textposition="bottom right")
     customer_growth_chart_div = fig.to_html(full_html=False)
 
-    # Chart (5): Gender vs. Job Heatmap
-    # gender_job_data = db.session.query(
-    #     Customer.gender,
-    #     Job.name.label('job'),
-    #     db.func.count().label('count')
-    # ).join(Job).group_by(Customer.gender, 'job').all()
-    # df = pd.DataFrame(gender_job_data, columns=['Gender', 'Job', 'Count'])
-    # fig = px.imshow(df.pivot_table(index='Gender', columns='Job', values='Count'),
-    #                 x=df['Job'].unique(), y=df['Gender'].unique(),
-    #                 color_continuous_scale='Viridis', title='Gender vs. Job Heatmap')
-    # fig.update_xaxes(title_text='Job')
-    # fig.update_yaxes(title_text='Gender')
-    # gender_job_heatmap_div = fig.to_html(full_html=False)
-
     # Chart (5): Usage Over Time
     usage_data = db.session.query(
-        db.func.DATE_FORMAT(Log.start_time, '%b %Y').label('month'),  # You can use 'week' instead of 'month'
-        db.func.count().label('count'),
-        db.func.DATE_FORMAT(Log.start_time, '%a %d').label('day')
+        db.func.to_char(Log.start_time, 'Mon YYYY').label('month'),
+        db.func.count().label('count')
     ).group_by('month').order_by('month').all()
-    df = pd.DataFrame(usage_data, columns=['Month', 'Usage Count','Day'])
-    fig = px.line(df, x='Month', y='Usage Count', text='Day',title='Usage Over Time',
+    df = pd.DataFrame(usage_data, columns=['Month', 'Usage Count'])
+    fig = px.line(df, x='Month', y='Usage Count', title='Usage Over Time',
                   labels={'Month': 'Month', 'Usage Count': 'Usage Count'})
     fig.update_traces(textposition="bottom right")
     usage_chart_div = fig.to_html(full_html=False)
 
     # Chart (6): Revenue Analysis
     revenue_data = db.session.query(
-        db.func.DATE_FORMAT(Log.start_time, '%b %Y').label('month'),  # You can use 'week' instead of 'month'
+        db.func.to_char(Log.start_time, 'Mon YYYY').label('month'),
         db.func.sum(Log.total_price).label('total_revenue')
     ).group_by('month').order_by('month').all()
     df = pd.DataFrame(revenue_data, columns=['Month', 'Total Revenue'])
@@ -358,6 +348,12 @@ def dashboard():
                         chart7=customer_behavior_chart,
                         chart8=package_chart,
                         chart9=subscription_chart,
+                        # New stat cards
+                        total_customers=total_customers,
+                        total_revenue=total_revenue,
+                        active_subscriptions=active_subscriptions,
+                        total_reservations=total_reservations,
+                        active_reservations=active_reservations
                         )
 
 ############################################################################################################

@@ -1,5 +1,3 @@
-# from wsgiref.validate import validator
-from lib2to3.fixer_base import ConditionalFix
 from app.models import *
 # from flask import Flask
 from flask_wtf import FlaskForm, RecaptchaField

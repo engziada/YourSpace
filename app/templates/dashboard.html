@@ -7,43 +7,118 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 {% endblock %}
 
-
 {% block content %}
-    <h1>Dashboard</h1>
-    <p>Welcome, admin!</p>
-    <hr>
-    
-        <!-- Step (6): Revenue Analysis -->
-        {{ chart6|safe }}
-
-    <!-- Step (4): Monthly Customer Growth -->
-    {{ chart4|safe }}
-
-        <!-- Step (8): Package Analysis -->
-        {{ chart8|safe }}
-
-    <!-- Step (3): Subscriptions Per Month -->
-    {{ chart3|safe }}
-
-        <!-- Step (5): Usage Over Time -->
-        {{ chart5|safe }}
-
-    <!-- Step (1): Gender Distribution Chart -->
-    {{ chart1|safe }}
-
-        <!-- Step (9): Subscription Analysis -->
-        {{ chart9|safe }}
-
-    <!-- Step (7): Customer Behavior -->
-    {{ chart7|safe }}
-
-        <!-- Step (2): Job Distribution -->
-        {{ chart2|safe }}
-
-
-
+    <h1 class="mb-4">Dashboard</h1>
+    <div class="row mb-4 justify-content-center">
+        <div class="col-lg-2 col-md-4 col-6 mb-3 d-flex">
+            <div class="card stat-card text-center shadow-sm flex-fill">
+                <div class="card-body">
+                    <h6 class="card-title">Customers</h6>
+                    <h2 class="card-stat">{{ total_customers }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6 mb-3 d-flex">
+            <div class="card stat-card text-center shadow-sm flex-fill">
+                <div class="card-body">
+                    <h6 class="card-title">Revenue (SR)</h6>
+                    <h2 class="card-stat">{{ total_revenue|int }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6 mb-3 d-flex">
+            <div class="card stat-card text-center shadow-sm flex-fill">
+                <div class="card-body">
+                    <h6 class="card-title">Active Subs</h6>
+                    <h2 class="card-stat">{{ active_subscriptions }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6 mb-3 d-flex">
+            <div class="card stat-card text-center shadow-sm flex-fill">
+                <div class="card-body">
+                    <h6 class="card-title">Reservations</h6>
+                    <h2 class="card-stat">{{ total_reservations }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6 mb-3 d-flex">
+            <div class="card stat-card text-center shadow-sm flex-fill">
+                <div class="card-body">
+                    <h6 class="card-title">Active Resv.</h6>
+                    <h2 class="card-stat">{{ active_reservations }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="dashboard-charts-grid mb-5">
+        <div class="dashboard-chart">{{ chart1|safe if chart1 else '<div class=\'empty-chart\'>No gender data available</div>' }}</div>
+        <div class="dashboard-chart">{{ chart2|safe }}</div>
+        <div class="dashboard-chart">{{ chart3|safe }}</div>
+        <div class="dashboard-chart">{{ chart4|safe }}</div>
+        <div class="dashboard-chart">{{ chart5|safe }}</div>
+        <div class="dashboard-chart">{{ chart6|safe }}</div>
+        <div class="dashboard-chart">{{ chart7|safe }}</div>
+        <div class="dashboard-chart">{{ chart8|safe }}</div>
+        <div class="dashboard-chart">{{ chart9|safe }}</div>
+    </div>
 {% endblock %}
 
+{% block styles %}
+<style>
+.stat-card {
+    background: linear-gradient(135deg, #0B3571 60%, #FB4517 100%);
+    color: #fff;
+    border-radius: 1rem;
+    border: none;
+    min-height: 110px;
+    transition: box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.stat-card .card-title {
+    font-size: 1rem;
+    font-weight: 500;
+    opacity: 0.85;
+}
+.stat-card .card-stat {
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin: 0;
+}
+.stat-card:hover {
+    box-shadow: 0 4px 24px 0 rgba(251,69,23,0.15);
+}
+.dashboard-charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 2.5rem;
+}
+.dashboard-chart {
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 2px 12px 0 rgba(11,53,113,0.07);
+    padding: 2.5rem 2rem 2rem 2rem;
+    margin-bottom: 2rem;
+    min-height: 420px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.empty-chart {
+    color: #aaa;
+    text-align: center;
+    font-size: 1.2rem;
+    padding: 2rem;
+}
+@media (max-width: 1200px) {
+    .dashboard-charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
 
 {% block scripts %}
 {% endblock %}
