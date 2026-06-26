@@ -1,0 +1,151 @@
+{% extends 'master_external.html' %}
+
+{% block title %}Welcome | Your Space{% endblock %}
+
+{% block content %}
+<div class="landing-welcome">
+    <div class="container text-center">
+        <p class="landing-tagline">A quiet corner, great coffee, and space to think.</p>
+        <div class="row justify-content-center mt-5">
+            <div class="col-12 col-md-6 mb-3 pr-md-2">
+                <a href="{{ url_for('spaces_public') }}" class="btn btn-outline-primary btn-lg btn-block">
+                    Browse Spaces
+                </a>
+            </div>
+            <div class="col-12 col-md-6 mb-3 pl-md-2">
+                <a href="{{ url_for('request_space') }}" class="btn btn-primary btn-lg btn-block">
+                    Reserve Now
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="landing-steps">
+    <div class="container">
+        <p class="steps-intro">How it works</p>
+        <div class="steps-flow">
+            <div class="step">
+                <span class="step-num">1</span>
+                <h5>Tell us what you need</h5>
+                <p>Pick your space and time. No account required.</p>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step">
+                <span class="step-num">2</span>
+                <h5>We find your spot</h5>
+                <p>Our team checks availability and confirms details.</p>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step">
+                <span class="step-num">3</span>
+                <h5>Show up and focus</h5>
+                <p>Arrive at your reserved workspace and get to work.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.landing-welcome {
+    padding: 4rem 1rem;
+    background: #FDF8F3;
+}
+.landing-tagline {
+    font-size: 1.5rem;
+    color: #6B5E57;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+}
+.landing-steps {
+    padding: 3rem 1rem;
+    background: #fff;
+}
+.steps-intro {
+    text-align: center;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #6B5E57;
+    margin-bottom: 2.5rem;
+}
+.steps-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+}
+.step {
+    text-align: center;
+    max-width: 220px;
+    padding: 1rem;
+}
+.step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    background: #0B3571;
+    color: #fff;
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+.step h5 {
+    color: #2A1F1D;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    font-size: 1rem;
+}
+.step p {
+    color: #6B5E57;
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+.step-connector {
+    width: 2.5rem;
+    height: 2px;
+    background: #EDE8E2;
+    flex-shrink: 0;
+}
+.btn-primary {
+    background-color: #0B3571;
+    border-color: #0B3571;
+    border-radius: 0.75rem;
+    padding: 0.875rem 2rem;
+    font-weight: 500;
+}
+.btn-primary:hover {
+    background-color: #FB4517;
+    border-color: #FB4517;
+}
+.btn-outline-primary {
+    color: #0B3571;
+    border-color: #0B3571;
+    border-radius: 0.75rem;
+    padding: 0.875rem 2rem;
+    font-weight: 500;
+}
+.btn-outline-primary:hover {
+    background-color: #0B3571;
+    color: #fff;
+}
+@media (max-width: 767px) {
+    .steps-flow {
+        flex-direction: column;
+        gap: 0;
+    }
+    .step-connector {
+        width: 2px;
+        height: 1.5rem;
+    }
+    .landing-tagline {
+        font-size: 1.2rem;
+    }
+}
+</style>
+{% endblock %}

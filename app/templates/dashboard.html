@@ -11,7 +11,7 @@
     <h1 class="mb-4">Dashboard</h1>
     <div class="row mb-4 justify-content-center">
         <div class="col-lg-2 col-md-4 col-6 mb-3 d-flex">
-            <div class="card stat-card text-center shadow-sm flex-fill">
+            <div class="card stat-card-secondary text-center shadow-sm flex-fill">
                 <div class="card-body">
                     <h6 class="card-title">Customers</h6>
                     <h2 class="card-stat">{{ total_customers }}</h2>
@@ -19,7 +19,7 @@
             </div>
         </div>
         <div class="col-lg-2 col-md-4 col-6 mb-3 d-flex">
-            <div class="card stat-card text-center shadow-sm flex-fill">
+            <div class="card stat-card-primary text-center shadow flex-fill">
                 <div class="card-body">
                     <h6 class="card-title">Revenue (SR)</h6>
                     <h2 class="card-stat">{{ total_revenue|int }}</h2>
@@ -27,7 +27,7 @@
             </div>
         </div>
         <div class="col-lg-2 col-md-4 col-6 mb-3 d-flex">
-            <div class="card stat-card text-center shadow-sm flex-fill">
+            <div class="card stat-card-secondary text-center shadow-sm flex-fill">
                 <div class="card-body">
                     <h6 class="card-title">Active Subs</h6>
                     <h2 class="card-stat">{{ active_subscriptions }}</h2>
@@ -35,7 +35,7 @@
             </div>
         </div>
         <div class="col-lg-2 col-md-4 col-6 mb-3 d-flex">
-            <div class="card stat-card text-center shadow-sm flex-fill">
+            <div class="card stat-card-secondary text-center shadow-sm flex-fill">
                 <div class="card-body">
                     <h6 class="card-title">Reservations</h6>
                     <h2 class="card-stat">{{ total_reservations }}</h2>
@@ -43,7 +43,7 @@
             </div>
         </div>
         <div class="col-lg-2 col-md-4 col-6 mb-3 d-flex">
-            <div class="card stat-card text-center shadow-sm flex-fill">
+            <div class="card stat-card-secondary text-center shadow-sm flex-fill">
                 <div class="card-body">
                     <h6 class="card-title">Active Resv.</h6>
                     <h2 class="card-stat">{{ active_reservations }}</h2>
@@ -79,63 +79,106 @@
         <div class="col-12 mb-3">
             <h2 class="section-title">Customer Insights</h2>
         </div>
-        <div class="col-lg-4 mb-4">
-            <div class="dashboard-chart">{{ chart3|safe }}</div>
+        <div class="col-lg-6 mb-4">
+            <div class="dashboard-chart customer-insights-chart">
+                {{ chart3|safe }}
+            </div>
         </div>
-        <div class="col-lg-4 mb-4">
-            <div class="dashboard-chart">{{ chart4|safe }}</div>
+        <div class="col-lg-6 mb-4">
+            <div class="dashboard-chart customer-insights-chart">
+                {{ chart4|safe }}
+            </div>
         </div>
-        <div class="col-lg-4 mb-4">
-            <div class="dashboard-chart">{{ chart7|safe }}</div>
+        <div class="col-12 mb-4">
+            <div class="dashboard-chart customer-insights-chart">
+                {{ chart7|safe }}
+            </div>
         </div>
     </div>
 {% endblock %}
 
 {% block styles %}
 <style>
-.stat-card {
-    background: linear-gradient(135deg, #0B3571 60%, #FB4517 100%);
+body {
+    background-color: #f0f2f5;
+}
+.stat-card-primary {
+    background: #0B3571;
     color: #fff;
     border-radius: 1rem;
     border: none;
+    border-top: 4px solid #FB4517;
+    min-height: 120px;
+    transition: box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.stat-card-primary .card-title {
+    font-size: 1rem;
+    font-weight: 500;
+    opacity: 0.85;
+}
+.stat-card-primary .card-stat {
+    font-size: 2.6rem;
+    font-weight: bold;
+    margin: 0;
+}
+.stat-card-primary:hover {
+    box-shadow: 0 8px 28px 0 rgba(11,53,113,0.22);
+}
+.stat-card-secondary {
+    background: #fff;
+    color: #0B3571;
+    border-radius: 1rem;
+    border: none;
+    border-top: 3px solid #0B3571;
     min-height: 110px;
     transition: box-shadow 0.2s;
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
-.stat-card .card-title {
-    font-size: 1rem;
+.stat-card-secondary .card-title {
+    font-size: 0.95rem;
     font-weight: 500;
-    opacity: 0.85;
+    color: #6c757d;
 }
-.stat-card .card-stat {
+.stat-card-secondary .card-stat {
     font-size: 2.2rem;
     font-weight: bold;
     margin: 0;
+    color: #0B3571;
 }
-.stat-card:hover {
-    box-shadow: 0 4px 24px 0 rgba(251,69,23,0.15);
+.stat-card-secondary:hover {
+    box-shadow: 0 8px 28px 0 rgba(11,53,113,0.12);
 }
 .section-title {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: 600;
     color: #0B3571;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.4rem;
     border-bottom: 2px solid #FB4517;
     display: inline-block;
 }
 .dashboard-chart {
     background: #fff;
     border-radius: 1rem;
-    box-shadow: 0 2px 12px 0 rgba(11,53,113,0.07);
-    padding: 2.5rem 2rem 2rem 2rem;
-    min-height: 420px;
-    height: 100%;
+    box-shadow: 0 2px 16px 0 rgba(11,53,113,0.08);
+    border: 1px solid #e8ecf1;
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
+    min-height: 460px;
+    height: auto;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+.dashboard-chart > div {
+    width: 100% !important;
+}
+.customer-insights-chart {
+    min-height: 420px;
 }
 .empty-chart {
     color: #aaa;

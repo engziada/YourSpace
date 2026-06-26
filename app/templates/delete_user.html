@@ -8,7 +8,7 @@
     <p>Are you sure you want to delete the user "{{ user.username }}"?</p>
     <form method="post">
         {{ form.hidden_tag() }}
-        <button type="submit" class="btn btn-danger">Confirm Delete</button>
+        <button type="submit" class="btn btn-danger btn-block">Confirm Delete</button>
         <a href="{{ url_for('users') }}" class="btn btn-secondary">Cancel</a>
     </form>
 {% endblock %}

@@ -1,6 +1,6 @@
 * {
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
     /* font-size: 16px; */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -12,31 +12,10 @@ html, body {
 }
 
 body {
-    /* Set a background color or gradient as a fallback */
-    background: linear-gradient(to bottom, #f0f0f0, #d0d0d0);
-    
-    /* Adjust the opacity of the background image */
+    background: #F5F0EB;
     position: relative;
     display: flex;
     flex-direction: column;
-}
-
-body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('/static/images/bg3.jpg');
-    /* Adjust the image path */
-    background-size: cover;
-    opacity: 0.1;
-    /* Adjust the opacity of the background image */
-    pointer-events: none;
-    /* Ensure the overlay doesn't interfere with content */
-    z-index: -1;
-    /* Place the overlay behind the content */
 }
 
 .page-container {
@@ -82,20 +61,21 @@ body::before {
 }
 
 .footer-content {
-    /* position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -30%); */
     text-align: center;
     color: gainsboro;
-    text-transform: uppercase;
-    font-size: 2vw;
+    font-size: 0.85rem;
     padding-top: 5px;
-    @media (min-width: 768px) {
-        font-size: smaller;
+}
+
+@media (min-width: 768px) {
+    .footer-content {
+        font-size: 0.95rem;
     }
-    @media (max-width: 480px) {
-        font-size: 2.5vw;
+}
+
+@media (max-width: 480px) {
+    .footer-content {
+        font-size: 0.75rem;
     }
 }
 
@@ -221,7 +201,8 @@ footer a {
     font-size: 18px;
 }
 
-.navbar .nav-item .nav-link.user {
+.navbar .nav-item .nav-link.user,
+.navbar .nav-item .nav-link.nav-user {
     color: #FB4517;
     font-weight: bold;
 }
@@ -250,6 +231,9 @@ footer a {
     background-color: #FB4517;
     border-color: #0B3571;
     color: white;
+}
+
+.btn-primary.btn-block {
     width: 100%;
     margin-top: 20px;
 }
@@ -377,67 +361,113 @@ footer a {
     text-align: center;
 }
 
-/* Translucent Card for Forms */
+/* Card for Forms */
 .translucent-card {
-    background-color: rgba(255, 255, 255, 0.85) !important; /* Semi-transparent white */
-    border-radius: 15px; /* Curved corners */
-    backdrop-filter: blur(5px); /* Optional: Adds a blur effect to the background */
-    -webkit-backdrop-filter: blur(5px); /* For Safari */
+    background-color: #fff;
+    border-radius: 0.75rem;
 }
 
 /* Hero Section */
 .hero-section {
     position: relative;
-    height: 60vh;
-    background-image: url('https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg');
+    padding: 6rem 1rem 5rem;
+    text-align: center;
+    overflow: hidden;
+}
+.hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/static/images/bg3.jpg');
     background-size: cover;
     background-position: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    text-align: center;
+    background-repeat: no-repeat;
 }
-
 .hero-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
+    background: linear-gradient(135deg, rgba(11,53,113,0.88) 0%, rgba(11,53,113,0.72) 50%, rgba(42,31,29,0.82) 100%);
 }
-
 .hero-content {
     position: relative;
     z-index: 2;
 }
-
 .hero-content h1 {
-    font-size: 3.5rem;
-    font-weight: bold;
+    color: #fff;
+    font-size: 2.75rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
-
 .hero-content p {
-    font-size: 1.5rem;
+    color: rgba(255,255,255,0.9);
+    font-size: 1.2rem;
+    max-width: 520px;
+    margin: 0 auto 1.5rem;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+.btn-hero {
+    display: inline-block;
+    background: #FB4517;
+    color: #fff;
+    border: 2px solid #FB4517;
+    border-radius: 0.75rem;
+    padding: 0.875rem 2.25rem;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.btn-hero:hover {
+    background: transparent;
+    color: #fff;
+    border-color: #fff;
+    text-decoration: none;
 }
 
 /* Amenities Section */
 .amenities-section {
-    padding: 4rem 0;
-    background-color: #f8f9fa;
+    padding: 2rem 1rem;
+    background: #fff;
+    border-bottom: 1px solid #EDE8E2;
 }
-
 .amenity-item {
     text-align: center;
+    padding: 1rem;
 }
-
-.amenity-item .fas {
-    font-size: 3rem;
-    color: #FB4517; /* Your brand's primary color */
-    margin-bottom: 1rem;
+.amenity-item i {
+    font-size: 1.25rem;
+    color: #FB4517;
+    margin-bottom: 0.5rem;
+    display: block;
 }
-
 .amenity-item h5 {
-    font-weight: bold;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #6B5E57;
+    margin-bottom: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* Form Fieldsets */
+.form-fieldset {
+    border: 1px solid #dee2e6;
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    background: #fff;
+}
+.form-fieldset legend {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0B3571;
+    padding: 0 0.5rem;
+    width: auto;
+    margin-bottom: 0.5rem;
 }

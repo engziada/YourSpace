@@ -1,7 +1,7 @@
-<!-- templates/users.html -->
+<!-- templates/logs.html -->
 {% extends 'master.html' %}
 
-{% block title %}Logs | Your Space{% endblock %}
+{% block title %}Reservations | Your Space{% endblock %}
 
 {% block content %}
     <div class="row">
@@ -57,7 +57,7 @@
                 <td>{{ log.total_price }}</td>
                 <td style="text-align: left;">
                     <a href="#" data-target="#modal2-{{ log.id }}" data-toggle="modal" data-log-id="{{log.id}}">
-                        <span class="material-icons" title="Details">info</span>
+                        <span class="material-symbols-outlined" title="Details">info</span>
                     </a>
                     <!-- Bootstrap Modal -->
                     <div class="modal fade" id="modal2-{{ log.id }}" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
@@ -122,7 +122,7 @@
                                 
                                 <!-- Modal Footer -->
                                 <div class="modal-footer">
-                                    <button type="button btn btn-primary" class="close" data-dismiss="modal" aria-label="Close">Close</button>
+                                    <button type="button" class="btn btn-primary close" data-dismiss="modal" aria-label="Close">Close</button>
                                 </div>
                             </div>
                         </div>
@@ -131,7 +131,7 @@
 
                     {% if log.is_active %}
                     <a href="#" style="color: brown; font-weight: bolder;" class="calculate-link" data-target="#modal-{{ log.id }}" data-toggle="modal" data-log-id="{{log.id}}">
-                        <span class="material-icons" title="Checkout">credit_score</span>
+                        <span class="material-symbols-outlined" title="Checkout">credit_score</span>
                     </a>
                     <!-- Bootstrap Modal -->
                     <div class="modal fade" id="modal-{{ log.id }}" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
@@ -162,6 +162,13 @@
                         </div>
                     </div>
                     {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="10" class="text-center text-muted py-4">
+                    <span class="material-symbols-outlined" style="font-size: 2rem; color: #adb5bd;">inbox</span>
+                    <p class="mt-2 mb-0">No reservations found. <a href="{{ url_for('add_log') }}">Create your first reservation</a>.</p>
                 </td>
             </tr>
             {% endfor %}

@@ -1,4 +1,4 @@
-<!-- templates/users.html -->
+<!-- templates/spaces.html -->
 {% extends 'master.html' %}
 
 {% block title %}Spaces | Your Space{% endblock %}
@@ -34,6 +34,13 @@
                     <a href="{{ url_for('delete_space', space_id=space.id) }}" onclick="return confirm('Are you sure you want to delete this space?');" title="Delete Space">
                         <span class="material-symbols-outlined">delete</span>
                     </a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                    <span class="material-symbols-outlined" style="font-size: 2rem; color: #adb5bd;">inbox</span>
+                    <p class="mt-2 mb-0">No spaces found. <a href="{{ url_for('add_space') }}">Add your first space</a>.</p>
                 </td>
             </tr>
             {% endfor %}

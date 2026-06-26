@@ -255,6 +255,19 @@ class EditLogForm(FlaskForm):
 
 
 ############################################################################################################
+# Request Space Form (Public, no login required)
+class RequestSpaceForm(FlaskForm):
+    customer_name = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=100)])
+    customer_phone = StringField('Phone Number', validators=[DataRequired(), validate_phone_number])
+    customer_email = EmailField('Email Address')
+    preferred_date = DateField('Preferred Date', validators=[DataRequired()])
+    preferred_time = StringField('Preferred Time (e.g., 09:00)', validators=[DataRequired()])
+    duration_hours = IntegerField('Duration (Hours)', validators=[DataRequired(), NumberRange(min=1, max=12)], default=1)
+    space = QuerySelectField('Preferred Workspace', query_factory=lambda: Space.query.filter_by(is_ready=True).all(), get_label='name', allow_blank=True)
+    notes = TextAreaField('Additional Notes')
+    submit = SubmitField('Submit Request')
+
+
 # Email Template Form
 class EmailTemplate(FlaskForm):
     recipients = StringField('Recipients', validators=[DataRequired()])

@@ -212,6 +212,31 @@ class EmailSent(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 
+# ReservationRequest Model
+class ReservationRequest(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    customer_name = db.Column(db.String(100), nullable=False)
+    customer_phone = db.Column(db.String(15), nullable=False)
+    customer_email = db.Column(db.String(120), nullable=True)
+    preferred_date = db.Column(db.Date, nullable=False)
+    preferred_time = db.Column(db.Time, nullable=False)
+    duration_hours = db.Column(db.Integer, nullable=False, default=1)
+    space_id = db.Column(db.Integer, db.ForeignKey('space.id'), nullable=True)
+    space = db.relationship('Space', backref=db.backref('reservation_requests', lazy=True))
+    notes = db.Column(db.Text, nullable=True)
+    status = db.Column(db.String(20), nullable=False, default='pending')  # pending, confirmed, rejected, cancelled
+    staff_notes = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
+    processed_at = db.Column(db.DateTime, nullable=True)
+    processed_by_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    processed_by = db.relationship('User', backref=db.backref('processed_requests', lazy=True))
+    log_id = db.Column(db.Integer, db.ForeignKey('log.id'), nullable=True)
+    log = db.relationship('Log', backref=db.backref('reservation_request', uselist=False))
+
+    def __repr__(self):
+        return f"Request {self.id}: {self.customer_name} on {self.preferred_date}"
+
+
 # Post Model    
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)

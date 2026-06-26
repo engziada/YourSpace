@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,7 +8,7 @@
     <title>{% block title %}Your Space{% endblock %}</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
@@ -45,40 +45,42 @@
                     </li>
 
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('reservation_requests') }}">
+                            <span class="badge badge-danger" id="pending-requests-badge" style="display:none;">0</span>
+                            Requests
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
                         <div class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
-                                Customers
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownOperations" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Operations
                             </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownOperations">
                                 <a class="dropdown-item" href="{{ url_for('customers') }}">
                                     <span class="material-symbols-outlined">list</span>
                                     <span class="separator"></span>
-                                    List</a>
-                                
-                                <a class="dropdown-item" href="{{ url_for('jobs') }}">
-                                    <span class="material-symbols-outlined">work</span>
+                                    Customers</a>
+                                <a class="dropdown-item" href="{{ url_for('logs') }}">
+                                    <span class="material-symbols-outlined">event_note</span>
                                     <span class="separator"></span>
-                                    Jobs</a>
-
-                                <a class="dropdown-item" href="{{ url_for('institutes') }}">
-                                    <span class="material-symbols-outlined">school</span>
-                                    <span class="separator"></span>
-                                    Institutes</a>
-
+                                    Reservations</a>
                             </div>
                         </div>
                     </li>
 
                     <li class="nav-item">
-                        <!-- Main menu dropdown -->
                         <div class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownCatalog" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Admin
+                                Catalog
                             </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownCatalog">
                                 <a class="dropdown-item" href="{{ url_for('spaces') }}">
                                     <span class="material-symbols-outlined">chair_alt</span>
                                     <span class="separator"></span>
@@ -94,15 +96,30 @@
                                 <a class="dropdown-item" href="{{ url_for('subscriptions') }}">
                                     <span class="material-symbols-outlined">card_membership</span>
                                     <span class="separator"></span>
-                                    Subscriptions</a>    
+                                    Subscriptions</a>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownSetup" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Setup
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownSetup">
                                 <a class="dropdown-item" href="{{ url_for('users') }}">
                                     <span class="material-symbols-outlined">group</span>
                                     <span class="separator"></span>
                                     Employees</a>
-                                <a class="dropdown-item" href="{{ url_for('dashboard') }}">
-                                    <span class="material-symbols-outlined">bar_chart_4_bars</span>
+                                <a class="dropdown-item" href="{{ url_for('jobs') }}">
+                                    <span class="material-symbols-outlined">work</span>
                                     <span class="separator"></span>
-                                    Dashboard</a>
+                                    Jobs</a>
+                                <a class="dropdown-item" href="{{ url_for('institutes') }}">
+                                    <span class="material-symbols-outlined">school</span>
+                                    <span class="separator"></span>
+                                    Institutes</a>
                             </div>
                         </div>
                     </li>
@@ -116,11 +133,11 @@
                     {% if current_user.is_authenticated %}
                         <li class="nav-item">
                             <div class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #FB4517;">
+                                <a class="nav-link dropdown-toggle nav-user" href="#" id="navbarDropdownUser" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Welcome, {{ current_user.username }}
                                 </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownUser">
                                     
                                     <a class="dropdown-item" href="{{ url_for('change_password') }}">
                                         <span class="material-symbols-outlined">key</span>
@@ -156,14 +173,48 @@
     <!-- Flash messages -->
     <div class="container mt-3">
         {% with messages = get_flashed_messages(with_categories=true) %}
-            <div class="container">
-                {% for category,message in messages %}
-                    <!-- <div class="alert {% if 'Error' in message %}alert-danger{% elif 'Done' in message%}alert-success{% endif %}">{{ message }}</div> -->
-                    <div class="flash-message flash-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            </div>
+            {% for category,message in messages %}
+                <div class="flash-message flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
         {% endwith %}
     </div>
+
+    <!-- Breadcrumb -->
+    {% if request.endpoint and request.endpoint not in ['home', 'login', 'index'] %}
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-white shadow-sm" style="border-radius: 0.5rem; margin-bottom: 0;">
+                <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    {% if request.endpoint == 'customers' %}Customers
+                    {% elif request.endpoint == 'logs' %}Reservations
+                    {% elif request.endpoint == 'spaces' %}Spaces
+                    {% elif request.endpoint == 'packages' %}Packages
+                    {% elif request.endpoint == 'jobs' %}Jobs
+                    {% elif request.endpoint == 'institutes' %}Institutes
+                    {% elif request.endpoint == 'subscriptions' %}Subscriptions
+                    {% elif request.endpoint == 'pricing_rules' %}Pricing Rules
+                    {% elif request.endpoint == 'users' or request.endpoint == 'employees' %}Employees
+                    {% elif request.endpoint == 'dashboard' %}Dashboard
+                    {% elif request.endpoint == 'about' %}About
+                    {% elif request.endpoint == 'profile' %}Profile
+                    {% elif request.endpoint == 'change_password' %}Change Password
+                    {% elif request.endpoint == 'add_customer' %}Add Customer
+                    {% elif request.endpoint == 'add_log' %}New Reservation
+                    {% elif request.endpoint == 'add_space' %}Add Space
+                    {% elif request.endpoint == 'add_package' %}Add Package
+                    {% elif request.endpoint == 'add_job' %}Add Job
+                    {% elif request.endpoint == 'add_institute' %}Add Institute
+                    {% elif request.endpoint == 'add_subscription' %}Add Subscription
+                    {% elif request.endpoint == 'add_pricing_rule' %}Add Pricing Rule
+                    {% elif request.endpoint == 'add_user' %}Add Employee
+                    {% else %}{{ request.endpoint|replace('_', ' ')|title }}
+                    {% endif %}
+                </li>
+            </ol>
+        </nav>
+    </div>
+    {% endif %}
 
     <!-- Content block -->
     <div class="content-wrapper">
@@ -187,6 +238,9 @@
     {% block scripts %}
     {% endblock %}
 </div>
+<!-- impeccable-live-start -->
+<script src="http://localhost:8400/live.js"></script>
+<!-- impeccable-live-end -->
 </body>
 
 </html>

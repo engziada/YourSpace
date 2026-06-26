@@ -1,4 +1,4 @@
-<!-- templates/add_user.html -->
+<!-- templates/add_customer.html -->
 {% extends 'master.html' %}
 
 {% block title %}Add Customer | Your Space{% endblock %}
@@ -8,68 +8,83 @@
         <h1>Register New Customer</h1>
         <form method="post" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
+
+            <fieldset class="form-fieldset">
+                <legend>Personal Information</legend>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        {{ form.name.label(class="mandatory")}} {{ form.name(class="form-control") }}
+                        {% if form.name.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.name.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-md-6">
+                        {{ form.phone.label(class="mandatory") }} {{ form.phone(class="form-control") }}
+                        {% if form.phone.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.phone.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-8">
+                        {{ form.email.label(class="mandatory") }} {{ form.email(class="form-control") }}
+                        {% if form.email.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.email.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-md-4">
+                        {{ form.gender.label }} {{ form.gender(class="form-control") }}
+                        {% if form.gender.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.gender.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-fieldset">
+                <legend>Work & Education</legend>
+                <div class="row">
+                    <div class="form-group col-md-6" >
+                        {{ form.job.label }} {{ form.job(class="form-control", id='job-select') }}
+                        {% if form.job.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.job.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-md-6">
+                        {{ form.institute.label }} {{ form.institute(class="form-control", id='institute-select') }}
+                        {% if form.institute.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.institute.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </fieldset>
+
             <div class="form-group">
-                {{ form.name.label(class="mandatory")}} {{ form.name(class="form-control") }}
-                {% if form.name.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.name.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                {{ form.phone.label(class="mandatory") }} {{ form.phone(class="form-control") }}
-                {% if form.phone.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.phone.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                {{ form.email.label(class="mandatory") }} {{ form.email(class="form-control") }}
-                {% if form.email.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.email.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                {% endif %}
-            </div>
-            <div class="form-group" >
-                {{ form.job.label }} {{ form.job(class="form-control", id='job-select') }}
-                {% if form.job.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.job.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                {{ form.institute.label }} {{ form.institute(class="form-control", id='institute-select') }}
-                {% if form.institute.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.institute.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                {{ form.gender.label }} {{ form.gender(class="form-control") }}
-                {% if form.gender.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.gender.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Add Customer" class="btn btn-primary">
+                <input type="submit" value="Add Customer" class="btn btn-primary btn-block">
             </div>
         </form>
     </div>

@@ -1,4 +1,4 @@
-<!-- templates/users.html -->
+<!-- templates/customers.html -->
 {% extends 'master.html' %}
 
 {% block title %}Customers | Your Space{% endblock %}
@@ -35,10 +35,9 @@
         </div>
     </form>
 
+    <a href="{{ url_for('export_to_excel', model_name='Customer') }}">Export to Excel</a>
     <div class="grid-container">
         <table class="table table-striped">
-        <a href="{{ url_for('export_to_excel', model_name='Customer') }}">Export to Excel</a>
-
         <thead>
             <tr>
                 <th>ID</th>
@@ -61,13 +60,13 @@
                 <td>{{ customer.subscription.name }}</td>
                 <td>
                     <a href="#" data-target="#modal-{{ customer.id }}" data-toggle="modal" data-customer-id="{{customer.id}}">
-                        <span class="material-icons" title="Details">info</span>
+                        <span class="material-symbols-outlined" title="Details">info</span>
                     </a>
                     <a href="#" class="edit-customer-btn" data-customer-id="{{ customer.id }}" data-toggle="modal" data-target="#editCustomerModal">
-                        <span class="material-icons" title="Edit">edit</span>
+                        <span class="material-symbols-outlined" title="Edit">edit</span>
                     </a>
-                    <a href="{{ url_for('delete_customer', customer_id=customer.id) }}">
-                        <span class="material-icons" title="Delete">delete</span>
+                    <a href="{{ url_for('delete_customer', customer_id=customer.id) }}" onclick="return confirm('Delete {{ customer.name }}? This cannot be undone.');" title="Delete Customer">
+                        <span class="material-symbols-outlined">delete</span>
                     </a>
                     <!-- Bootstrap Modal -->
                     <div class="modal fade" id="modal-{{ customer.id }}" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
@@ -143,11 +142,18 @@
                                 
                                 <!-- Modal Footer -->
                                 <div class="modal-footer">
-                                    <button type="button btn btn-primary" class="close" data-dismiss="modal" aria-label="Close">Close</button>
+                                    <button type="button" class="btn btn-primary close" data-dismiss="modal" aria-label="Close">Close</button>
                                 </div>
                             </div>
                         </div>
                     </div>                    
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" class="text-center text-muted py-4">
+                    <span class="material-symbols-outlined" style="font-size: 2rem; color: #adb5bd;">inbox</span>
+                    <p class="mt-2 mb-0">No customers found. <a href="{{ url_for('add_customer') }}">Add your first customer</a>.</p>
                 </td>
             </tr>
             {% endfor %}

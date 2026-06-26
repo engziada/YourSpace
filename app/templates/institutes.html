@@ -1,4 +1,4 @@
-<!-- templates/users.html -->
+<!-- templates/institutes.html -->
 {% extends 'master.html' %}
 
 {% block title %}Institutes | Your Space{% endblock %}
@@ -30,6 +30,13 @@
                     <a href="{{ url_for('delete_institute', institute_id=institute.id) }}" onclick="return confirm('Are you sure you want to delete this institute?');" title="Delete Institute">
                         <span class="material-symbols-outlined">delete</span>
                     </a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="text-center text-muted py-4">
+                    <span class="material-symbols-outlined" style="font-size: 2rem; color: #adb5bd;">inbox</span>
+                    <p class="mt-2 mb-0">No institutes found. <a href="{{ url_for('add_institute') }}">Add your first institute</a>.</p>
                 </td>
             </tr>
             {% endfor %}

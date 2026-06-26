@@ -1,9 +1,102 @@
-<!-- templates/home.html -->
-{% extends 'master.html' %}
+<!-- templates/about.html -->
+{% extends 'master_external.html' %}
 
-{% block title %}About | My App{% endblock %}
+{% block title %}About | Your Space{% endblock %}
 
 {% block content %}
-    <img src="{{ url_for('static', filename='images/about.png') }}" alt="About" style="width: 100%;">
-    <!-- Add your home page content here -->
+    <div class="about-hero">
+        <h1>About Your Space</h1>
+        <p class="lead">Workspace management made simple.</p>
+    </div>
+
+    <div class="row about-sections">
+        <div class="col-md-4 mb-4">
+            <div class="about-card">
+                <span class="material-symbols-outlined">event_note</span>
+                <h5>Reservations</h5>
+                <p>Track customer check-ins, check-outs, and usage in real time. Automatic billing based on hourly rates and packages.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="about-card">
+                <span class="material-symbols-outlined">groups</span>
+                <h5>Customer Management</h5>
+                <p>Register customers with job and institute details. Manage subscriptions and monitor remaining hours.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="about-card">
+                <span class="material-symbols-outlined">bar_chart_4_bars</span>
+                <h5>Analytics</h5>
+                <p>View revenue trends, customer analytics, and performance charts on the Dashboard to make informed decisions.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="about-footer">
+        <p><strong>Need help?</strong> Contact your system administrator or visit the <a href="{{ url_for('home') }}">Home</a> page for quick actions.</p>
+    </div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.about-hero {
+    text-align: center;
+    padding: 2.5rem 1rem 1.5rem;
+}
+.about-hero h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #0B3571;
+    margin-bottom: 0.4rem;
+}
+.about-hero .lead {
+    font-size: 1.1rem;
+    color: #6c757d;
+}
+.about-card {
+    background: #fff;
+    border-radius: 1rem;
+    border-top: 3px solid #0B3571;
+    padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(11,53,113,0.08);
+    text-align: center;
+    height: 100%;
+}
+.about-card .material-symbols-outlined {
+    font-size: 2.5rem;
+    color: #FB4517;
+    margin-bottom: 0.75rem;
+}
+.about-card h5 {
+    color: #0B3571;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+.about-card p {
+    color: #495057;
+    font-size: 0.95rem;
+    margin-bottom: 0;
+}
+.about-footer {
+    background: #fff;
+    border-radius: 0.8rem;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 2px 12px rgba(11,53,113,0.06);
+    border-left: 4px solid #FB4517;
+    margin-top: 1rem;
+}
+.about-footer p {
+    margin-bottom: 0;
+    color: #495057;
+}
+.about-footer a {
+    color: #0B3571;
+    font-weight: 600;
+    text-decoration: underline;
+}
+.about-footer a:hover {
+    color: #FB4517;
+}
+</style>
 {% endblock %}

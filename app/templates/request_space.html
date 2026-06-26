@@ -1,0 +1,107 @@
+{% extends 'master_external.html' %}
+
+{% block title %}Request Workspace | Your Space{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3><i class="fas fa-calendar-check mr-2"></i>Request a Workspace</h3>
+                    <p class="mb-0 small">Our team will check availability and contact you shortly.</p>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="request-form" novalidate>
+                        {{ form.hidden_tag() }}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.customer_name.label(class="font-weight-bold") }}
+                                    {{ form.customer_name(class="form-control", placeholder="Your full name") }}
+                                    {% if form.customer_name.errors %}
+                                        <small class="text-danger">{{ form.customer_name.errors[0] }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.customer_phone.label(class="font-weight-bold") }}
+                                    {{ form.customer_phone(class="form-control", placeholder="Your phone number") }}
+                                    {% if form.customer_phone.errors %}
+                                        <small class="text-danger">{{ form.customer_phone.errors[0] }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            {{ form.customer_email.label(class="font-weight-bold") }}
+                            {{ form.customer_email(class="form-control", placeholder="Your email address") }}
+                            {% if form.customer_email.errors %}
+                                <small class="text-danger">{{ form.customer_email.errors[0] }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {{ form.preferred_date.label(class="font-weight-bold") }}
+                                    {{ form.preferred_date(class="form-control") }}
+                                    {% if form.preferred_date.errors %}
+                                        <small class="text-danger">{{ form.preferred_date.errors[0] }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {{ form.preferred_time.label(class="font-weight-bold") }}
+                                    {{ form.preferred_time(class="form-control", placeholder="09:00") }}
+                                    {% if form.preferred_time.errors %}
+                                        <small class="text-danger">{{ form.preferred_time.errors[0] }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {{ form.duration_hours.label(class="font-weight-bold") }}
+                                    {{ form.duration_hours(class="form-control") }}
+                                    {% if form.duration_hours.errors %}
+                                        <small class="text-danger">{{ form.duration_hours.errors[0] }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            {{ form.space.label(class="font-weight-bold") }}
+                            {{ form.space(class="form-control") }}
+                            <small class="form-text text-muted">Optional. Leave blank if you have no preference.</small>
+                        </div>
+                        <div class="form-group">
+                            {{ form.notes.label(class="font-weight-bold") }}
+                            {{ form.notes(class="form-control", rows=3, placeholder="Any special requirements or notes...") }}
+                        </div>
+                        <div class="form-group text-center mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg btn-block">Submit Request</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.card-header.bg-primary {
+    background-color: #0B3571 !important;
+}
+.btn-primary {
+    background-color: #0B3571;
+    border-color: #0B3571;
+}
+.btn-primary:hover {
+    background-color: #FB4517;
+    border-color: #FB4517;
+}
+</style>
+{% endblock %}

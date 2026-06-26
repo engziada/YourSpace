@@ -8,6 +8,7 @@
     <title>{% block title %}Your Space{% endblock %}</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -38,10 +39,16 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('spaces_public') }}">Explore Spaces</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('request_space') }}">Request Workspace</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('about') }}">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                        <a class="nav-link" href="{{ url_for('login') }}">Staff Login</a>
                     </li>
                 </ul>
             </div>
@@ -50,10 +57,12 @@
 
     <!-- Hero Section -->
     <div class="hero-section">
+        <div class="hero-bg"></div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <h1>Find Your Focus at Your Space</h1>
-            <p>The perfect environment for productivity and creativity.</p>
+            <h1>A Space That Works With You</h1>
+            <p>Quiet corners, great coffee, and everything you need to get things done.</p>
+            <a href="{{ url_for('spaces_public') }}" class="btn btn-hero">Explore Our Spaces</a>
         </div>
     </div>
 
@@ -111,5 +120,8 @@
     {% block scripts %}
     {% endblock %}
 </div>
+<!-- impeccable-live-start -->
+<script src="http://localhost:8400/live.js"></script>
+<!-- impeccable-live-end -->
 </body>
 </html>

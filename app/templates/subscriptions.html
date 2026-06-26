@@ -1,4 +1,4 @@
-<!-- templates/users.html -->
+<!-- templates/subscriptions.html -->
 {% extends 'master.html' %}
 
 {% block title %}Subscriptions | Your Space{% endblock %}
@@ -37,6 +37,13 @@
                     <a href="{{ url_for('delete_subscription', subscription_id=subscription.id) }}" onclick="return confirm('Are you sure you want to delete this subscription?');" title="Delete Subscription">
                         <span class="material-symbols-outlined">delete</span>
                     </a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                    <span class="material-symbols-outlined" style="font-size: 2rem; color: #adb5bd;">inbox</span>
+                    <p class="mt-2 mb-0">No subscriptions found. <a href="{{ url_for('add_subscription') }}">Add your first subscription</a>.</p>
                 </td>
             </tr>
             {% endfor %}

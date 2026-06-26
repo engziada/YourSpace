@@ -1,0 +1,94 @@
+{% extends 'master_external.html' %}
+
+{% block title %}Our Spaces | Your Space{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="text-center mb-5">
+        <h2>Our Workspaces</h2>
+        <p class="lead text-muted">Explore our available spaces and request a reservation.</p>
+    </div>
+
+    <div class="row">
+        {% for space in spaces %}
+        <div class="col-md-4 mb-4">
+            <div class="space-card h-100">
+                {% if space.photo %}
+                <img src="{{ url_for('static', filename='photos/' + space.photo) }}" class="space-img" alt="{{ space.name }}">
+                {% else %}
+                <div class="space-img-placeholder">
+                    <i class="fas fa-building"></i>
+                </div>
+                {% endif %}
+                <div class="space-card-body">
+                    <h5>{{ space.name }}</h5>
+                    <p class="text-muted">{{ space.area or 'N/A' }}</p>
+                    {% if space.capacity %}
+                    <span class="badge badge-info"><i class="fas fa-users mr-1"></i>Capacity: {{ space.capacity }}</span>
+                    {% endif %}
+                    {% if space.location %}
+                    <span class="badge badge-secondary"><i class="fas fa-map-marker-alt mr-1"></i>{{ space.location }}</span>
+                    {% endif %}
+                    {% if space.description %}
+                    <p class="mt-2 small">{{ space.description }}</p>
+                    {% endif %}
+                    <a href="{{ url_for('request_space', space_id=space.id) }}" class="btn btn-sm btn-primary btn-block mt-3">Request This Space</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12 text-center">
+            <p class="text-muted">No spaces available at the moment. Please check back later.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.space-card {
+    background: #fff;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(11,53,113,0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.space-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(11,53,113,0.15);
+}
+.space-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+.space-img-placeholder {
+    width: 100%;
+    height: 200px;
+    background: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.space-img-placeholder i {
+    font-size: 3rem;
+    color: #adb5bd;
+}
+.space-card-body {
+    padding: 1.25rem;
+}
+.space-card-body h5 {
+    color: #0B3571;
+    font-weight: 600;
+}
+.btn-primary {
+    background-color: #0B3571;
+    border-color: #0B3571;
+}
+.btn-primary:hover {
+    background-color: #FB4517;
+    border-color: #FB4517;
+}
+</style>
+{% endblock %}

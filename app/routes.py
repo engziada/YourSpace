@@ -11,9 +11,9 @@ from .helpers import calculate_time_difference, generate_password, flash_errors,
 import pandas as pd
 from app.decorators import admin_required
 import plotly.express as px
-# import plotly.graph_objects as go
+import plotly.graph_objects as go
 # import plotly.io as pio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from werkzeug.utils import secure_filename
 from icecream import ic
 
@@ -109,8 +109,15 @@ def logout():
     return redirect(url_for('login'))
 
 
-# Home route
+# Landing page (public)
 @app.route('/')
+def landing():
+    if current_user.is_authenticated:
+        return redirect(url_for('logs'))
+    return render_template('landing.html')
+
+
+# Home route (internal, requires login)
 @app.route('/home')
 @login_required
 def home():
@@ -121,6 +128,52 @@ def home():
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+
+# Public Spaces Gallery
+@app.route('/spaces')
+def spaces_public():
+    spaces = Space.query.filter_by(is_ready=True).all()
+    return render_template('spaces_public.html', spaces=spaces)
+
+
+# Public Request Space Form
+@app.route('/request-space', methods=['GET', 'POST'])
+def request_space():
+    form = RequestSpaceForm()
+    space_id = request.args.get('space_id', type=int)
+    if space_id:
+        preselected_space = Space.query.get(space_id)
+        if preselected_space:
+            form.space.data = preselected_space
+    if request.method == 'POST' and form.validate_on_submit():
+        # Parse preferred time string to time object
+        try:
+            time_parts = form.preferred_time.data.split(':')
+            preferred_time = time(int(time_parts[0]), int(time_parts[1]))
+        except (ValueError, IndexError):
+            flash('Invalid time format. Please use HH:MM format.', 'danger')
+            return render_template('request_space.html', form=form)
+
+        new_request = ReservationRequest(
+            customer_name=form.customer_name.data,
+            customer_phone=form.customer_phone.data,
+            customer_email=form.customer_email.data,
+            preferred_date=form.preferred_date.data,
+            preferred_time=preferred_time,
+            duration_hours=form.duration_hours.data,
+            space=form.space.data,
+            notes=form.notes.data,
+            status='pending'
+        )
+        db.session.add(new_request)
+        db.session.commit()
+        flash('Your request has been submitted successfully! Our staff will contact you soon to confirm.', 'success')
+        return redirect(url_for('landing'))
+    else:
+        if request.method == 'POST':
+            flash_errors(form)
+    return render_template('request_space.html', form=form)
 
 
 # Users route
@@ -238,8 +291,44 @@ def dashboard():
     total_reservations = Log.query.count()
     active_reservations = Log.query.filter_by(is_active=True).count()
 
-    chart1 = None # Placeholder for removed chart
-    chart2 = None # Placeholder for removed chart
+    # SQLite strftime doesn't support %b; use %Y-%m and map to names
+    _MONTH_NAMES = {
+        '01': 'Jan', '02': 'Feb', '03': 'Mar', '04': 'Apr', '05': 'May', '06': 'Jun',
+        '07': 'Jul', '08': 'Aug', '09': 'Sep', '10': 'Oct', '11': 'Nov', '12': 'Dec'
+    }
+    _MONTH_ORDER = ['Jan 2026', 'Feb 2026', 'Mar 2026', 'Apr 2026', 'May 2026', 'Jun 2026']
+    _BRAND_COLORS = ['#0B3571', '#FB4517', '#2E86C1', '#E67E22', '#1ABC9C', '#E74C3C']
+
+    def _empty_chart(title):
+        fig = go.Figure()
+        fig.add_annotation(
+            text="No data available", xref="paper", yref="paper",
+            showarrow=False, font=dict(size=16, color="#999")
+        )
+        fig.update_layout(
+            title=title, paper_bgcolor='white', plot_bgcolor='white',
+            xaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
+            yaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
+            margin=dict(l=40, r=40, t=60, b=40)
+        )
+        return fig.to_html(full_html=False, config=dict(displayModeBar=False, responsive=True))
+
+    def _apply_brand(fig, height=380):
+        fig.update_layout(
+            autosize=True,
+            height=height,
+            font=dict(family="Segoe UI, Roboto, Helvetica, Arial, sans-serif", size=13),
+            title_font=dict(size=16, color="#0B3571"),
+            paper_bgcolor='white', plot_bgcolor='#FAFBFC',
+            legend=dict(orientation="h", yanchor="bottom", y=-0.22, xanchor="center", x=0.5),
+            margin=dict(l=50, r=30, t=70, b=70)
+        )
+        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#EAEEF3', linecolor='#CCD6E0')
+        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#EAEEF3', linecolor='#CCD6E0')
+        return fig
+
+    chart1 = None
+    chart2 = None
     # Chart (3): Subscription Distribution
     # subscription_data = db.session.query(
     #     (datetime.now() - Customer.subscription_startdate).label('duration')).filter(Customer.subscription_startdate.isnot(None)).all()
@@ -251,77 +340,152 @@ def dashboard():
     # Chart (3): Subscriptions Per Month
     subscription_data = db.session.query(
         Subscription.name,
-        db.func.to_char(Customer.subscription_startdate, 'Mon YYYY').label('month'),
+        db.func.strftime('%Y-%m', Customer.subscription_startdate).label('month'),
         db.func.count().label('count')
     ).join(Customer, Customer.subscription_id == Subscription.id)\
-    .group_by(Subscription.name, db.func.to_char(Customer.subscription_startdate, 'Mon YYYY')).all()
-    df = pd.DataFrame(subscription_data, columns=['Subscription', 'Month', 'Count'])
-    fig = px.line(df, x='Month', y='Count', color='Subscription',
-                  title='Subscriptions Per Month',
-                  labels={'Month': 'Month', 'Count': 'Number of Subscriptions'})
-    fig.update_traces(textposition="bottom right")
-    subscriptions_per_month_chart_div = fig.to_html(full_html=False)
+    .group_by(Subscription.name, db.func.strftime('%Y-%m', Customer.subscription_startdate))\
+    .order_by('month').all()
+    if subscription_data:
+        subscription_data = [
+            (n, f"{_MONTH_NAMES[m.split('-')[1]]} {m.split('-')[0]}", c)
+            for n, m, c in subscription_data
+        ]
+        df = pd.DataFrame(subscription_data, columns=['Subscription', 'Month', 'Count'])
+        # Fill missing month/subscription combos with 0
+        all_months = _MONTH_ORDER
+        all_subs = df['Subscription'].unique().tolist()
+        df_full = df.set_index(['Subscription', 'Month']).reindex(
+            pd.MultiIndex.from_product([all_subs, all_months], names=['Subscription', 'Month'])
+        ).fillna(0).reset_index()
+        df_full['Count'] = df_full['Count'].astype(int)
+        fig = px.line(df_full, x='Month', y='Count', color='Subscription',
+                      title='Subscriptions Per Month',
+                      labels={'Month': 'Month', 'Count': 'Number of Subscriptions'},
+                      category_orders={'Month': all_months},
+                      color_discrete_sequence=_BRAND_COLORS)
+        fig.update_traces(textposition="bottom right", line=dict(width=3), marker=dict(size=8))
+        fig = _apply_brand(fig, height=380)
+        subscriptions_per_month_chart_div = fig.to_html(full_html=False, config=dict(displayModeBar=False, responsive=True))
+    else:
+        subscriptions_per_month_chart_div = _empty_chart('Subscriptions Per Month')
 
     # Chart (4): Monthly Customer Growth
     customer_growth_data = db.session.query(
-        db.func.to_char(Customer.creation_date, 'Mon YYYY').label('month'),
+        db.func.strftime('%Y-%m', Customer.creation_date).label('month'),
         db.func.count().label('count')
     ).group_by('month').order_by('month').all()
-    df = pd.DataFrame(customer_growth_data, columns=['Month', 'Customer Count'])
-    fig = px.line(df, x='Month', y='Customer Count', title='Monthly Customer Growth',
-                  labels={'Month': 'Month', 'Customer Count': 'Number of Customers'})
-    fig.update_traces(textposition="bottom right")
-    customer_growth_chart_div = fig.to_html(full_html=False)
+    if customer_growth_data:
+        customer_growth_data = [
+            (f"{_MONTH_NAMES[m.split('-')[1]]} {m.split('-')[0]}", c)
+            for m, c in customer_growth_data
+        ]
+        df = pd.DataFrame(customer_growth_data, columns=['Month', 'Customer Count'])
+        df = df.set_index('Month').reindex(_MONTH_ORDER).fillna(0).reset_index()
+        df['Customer Count'] = df['Customer Count'].astype(int)
+        fig = px.line(df, x='Month', y='Customer Count', title='Monthly Customer Growth',
+                      labels={'Month': 'Month', 'Customer Count': 'Number of Customers'},
+                      category_orders={'Month': _MONTH_ORDER})
+        fig.update_traces(textposition="bottom right", line=dict(width=3, color=_BRAND_COLORS[0]), marker=dict(size=8))
+        fig = _apply_brand(fig, height=380)
+        customer_growth_chart_div = fig.to_html(full_html=False, config=dict(displayModeBar=False, responsive=True))
+    else:
+        customer_growth_chart_div = _empty_chart('Monthly Customer Growth')
 
     # Chart (5): Usage Over Time
     usage_data = db.session.query(
-        db.func.to_char(Log.start_time, 'Mon YYYY').label('month'),
+        db.func.strftime('%Y-%m', Log.start_time).label('month'),
         db.func.count().label('count')
     ).group_by('month').order_by('month').all()
-    df = pd.DataFrame(usage_data, columns=['Month', 'Usage Count'])
-    fig = px.line(df, x='Month', y='Usage Count', title='Usage Over Time',
-                  labels={'Month': 'Month', 'Usage Count': 'Usage Count'})
-    fig.update_traces(textposition="bottom right")
-    usage_chart_div = fig.to_html(full_html=False)
+    if usage_data:
+        usage_data = [
+            (f"{_MONTH_NAMES[m.split('-')[1]]} {m.split('-')[0]}", c)
+            for m, c in usage_data
+        ]
+        df = pd.DataFrame(usage_data, columns=['Month', 'Usage Count'])
+        df = df.set_index('Month').reindex(_MONTH_ORDER).fillna(0).reset_index()
+        df['Usage Count'] = df['Usage Count'].astype(int)
+        fig = px.line(df, x='Month', y='Usage Count', title='Usage Over Time',
+                      labels={'Month': 'Month', 'Usage Count': 'Usage Count'},
+                      category_orders={'Month': _MONTH_ORDER})
+        fig.update_traces(textposition="bottom right", line=dict(width=3, color=_BRAND_COLORS[1]), marker=dict(size=8))
+        fig = _apply_brand(fig, height=380)
+        usage_chart_div = fig.to_html(full_html=False, config=dict(displayModeBar=False, responsive=True))
+    else:
+        usage_chart_div = _empty_chart('Usage Over Time')
 
     # Chart (6): Revenue Analysis
     revenue_data = db.session.query(
-        db.func.to_char(Log.start_time, 'Mon YYYY').label('month'),
+        db.func.strftime('%Y-%m', Log.start_time).label('month'),
         db.func.sum(Log.total_price).label('total_revenue')
     ).group_by('month').order_by('month').all()
-    df = pd.DataFrame(revenue_data, columns=['Month', 'Total Revenue'])
-    fig = px.bar(df, x='Month', y='Total Revenue', title='Revenue Analysis',
-                 labels={'Month': 'Month', 'Total Revenue': 'Total Revenue'})
-    revenue_chart = fig.to_html(full_html=False)
+    if revenue_data:
+        revenue_data = [
+            (f"{_MONTH_NAMES[m.split('-')[1]]} {m.split('-')[0]}", float(r) if r else 0)
+            for m, r in revenue_data
+        ]
+        df = pd.DataFrame(revenue_data, columns=['Month', 'Total Revenue'])
+        df = df.set_index('Month').reindex(_MONTH_ORDER).fillna(0).reset_index()
+        fig = px.bar(df, x='Month', y='Total Revenue', title='Revenue Analysis',
+                     labels={'Month': 'Month', 'Total Revenue': 'Total Revenue (SR)'},
+                     category_orders={'Month': _MONTH_ORDER},
+                     color_discrete_sequence=[_BRAND_COLORS[0]])
+        fig.update_traces(marker_line_width=0, opacity=0.9)
+        fig = _apply_brand(fig, height=380)
+        revenue_chart = fig.to_html(full_html=False, config=dict(displayModeBar=False, responsive=True))
+    else:
+        revenue_chart = _empty_chart('Revenue Analysis')
 
     # Chart (7): Customer Behavior
     customer_behavior_data = db.session.query(
-        Log.customer_id,
+        Customer.name.label('customer_name'),
         db.func.count().label('log_count')
-    ).group_by(Log.customer_id).all()
-    df = pd.DataFrame(customer_behavior_data, columns=['Customer ID', 'Log Count'])
-    fig = px.bar(df, x='Log Count', y='Customer ID', title='Customer Behavior',
-                 labels={'Customer ID': 'Number of Customers','Log Count': 'Number of Logs'})
-    customer_behavior_chart = fig.to_html(full_html=False)
+    ).join(Log, Log.customer_id == Customer.id).group_by(Customer.name).order_by(db.func.count().desc()).limit(12).all()
+    if customer_behavior_data:
+        df = pd.DataFrame(customer_behavior_data, columns=['Customer', 'Log Count'])
+        fig = px.bar(df, x='Log Count', y='Customer', orientation='h', title='Customer Behavior',
+                     labels={'Customer': 'Customer', 'Log Count': 'Number of Logs'},
+                     category_orders={'Customer': df['Customer'].tolist()[::-1]},
+                     color_discrete_sequence=[_BRAND_COLORS[1]])
+        fig.update_xaxes(range=[0, df['Log Count'].max() * 1.15])
+        fig.update_traces(marker_line_width=0, opacity=0.9)
+        fig = _apply_brand(fig, height=350)
+        fig.update_layout(margin=dict(l=140, r=50, t=60, b=50), legend=dict(orientation="v", yanchor="top", y=1, xanchor="left", x=1.02))
+        customer_behavior_chart = fig.to_html(full_html=False, config=dict(displayModeBar=False, responsive=True))
+    else:
+        customer_behavior_chart = _empty_chart('Customer Behavior')
 
     # Chart (8): Package Analysis
     package_data = db.session.query(
-        Package.name.label('Package Name'),  # Include package names
+        Package.name.label('Package Name'),
         db.func.count().label('Count')
     ).join(Log).group_by(Package.name).all()
-    df = pd.DataFrame(package_data, columns=['Package Name', 'Count'])
-    fig = px.pie(df, names='Package Name', values='Count', title='Package Analysis')
-    package_chart = fig.to_html(full_html=False)
+    if package_data:
+        df = pd.DataFrame(package_data, columns=['Package Name', 'Count'])
+        fig = px.pie(df, names='Package Name', values='Count', title='Package Analysis',
+                     color_discrete_sequence=_BRAND_COLORS)
+        fig.update_traces(textposition='inside', textinfo='percent+label', pull=[0.02]*len(df))
+        fig = _apply_brand(fig, height=380)
+        fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=-0.15, xanchor="center", x=0.5), margin=dict(l=40, r=40, t=70, b=60))
+        package_chart = fig.to_html(full_html=False, config=dict(displayModeBar=False, responsive=True))
+    else:
+        package_chart = _empty_chart('Package Analysis')
 
     # Chart (9): Subscription Analysis
     subscription_data = db.session.query(
         Customer.subscription_id,
-        Subscription.name.label('Subscription Name'),  # Include subscription names
+        Subscription.name.label('Subscription Name'),
         db.func.count().label('Count')
     ).join(Log).join(Subscription).filter(Log.use_subscription == True).group_by(Customer.subscription_id, 'Subscription Name').all()
-    df = pd.DataFrame(subscription_data, columns=['Subscription ID', 'Subscription Name', 'Count'])
-    fig = px.pie(df, names='Subscription Name', values='Count', title='Subscription Analysis')
-    subscription_chart = fig.to_html(full_html=False)
+    if subscription_data:
+        df = pd.DataFrame(subscription_data, columns=['Subscription ID', 'Subscription Name', 'Count'])
+        fig = px.pie(df, names='Subscription Name', values='Count', title='Subscription Analysis',
+                     color_discrete_sequence=_BRAND_COLORS)
+        fig.update_traces(textposition='inside', textinfo='percent+label', pull=[0.02]*len(df))
+        fig = _apply_brand(fig, height=380)
+        fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=-0.15, xanchor="center", x=0.5), margin=dict(l=40, r=40, t=70, b=60))
+        subscription_chart = fig.to_html(full_html=False, config=dict(displayModeBar=False, responsive=True))
+    else:
+        subscription_chart = _empty_chart('Subscription Analysis')
 
 
 
@@ -1162,7 +1326,7 @@ def checkout(log_id:int):
     current_time = datetime.now(fixed_timezone)
     ic(current_time)
     # Convert offset-naive previous_time to offset-aware
-    previous_time = start_time # fixed_timezone.localize(start_time)
+    previous_time = fixed_timezone.localize(start_time)
     ic(previous_time)
 
     diff = current_time - previous_time
@@ -1453,6 +1617,204 @@ def delete_institute(institute_id):
         return redirect(url_for('institutes'))
     
 ##############################################################################################################
+
+##############################################################################################################
+# Reservation Requests (Staff-only)
+
+@app.route('/reservation-requests')
+@login_required
+def reservation_requests():
+    status_filter = request.args.get('status', 'pending')
+    page = request.args.get('page', 1, type=int)
+    per_page = 50
+
+    query = ReservationRequest.query
+    if status_filter != 'all':
+        query = query.filter_by(status=status_filter)
+
+    requests = query.order_by(ReservationRequest.created_at.desc()).paginate(page=page, per_page=per_page)
+    return render_template('reservation_requests.html', requests=requests, status_filter=status_filter)
+
+
+@app.route('/reservation-request/<int:request_id>')
+@login_required
+def reservation_request_detail(request_id):
+    req = ReservationRequest.query.get_or_404(request_id)
+    # Get availability for the requested date to help staff decide
+    requested_datetime = datetime.datetime.combine(req.preferred_date, req.preferred_time)
+    fixed_timezone = pytz.timezone('Asia/Riyadh')
+    requested_datetime = fixed_timezone.localize(requested_datetime)
+
+    # Check existing logs for that space on that date
+    existing_logs = []
+    if req.space:
+        start_of_day = requested_datetime.replace(hour=0, minute=0, second=0)
+        end_of_day = requested_datetime.replace(hour=23, minute=59, second=59)
+        existing_logs = Log.query.filter(
+            Log.space_id == req.space_id,
+            Log.start_time >= start_of_day,
+            Log.start_time <= end_of_day,
+            Log.is_active == True
+        ).all()
+
+    # Available spaces for modification
+    available_spaces = Space.query.filter_by(is_ready=True).all()
+    return render_template('reservation_request_detail.html', req=req, existing_logs=existing_logs, available_spaces=available_spaces)
+
+
+@app.route('/reservation-request/<int:request_id>/confirm', methods=['POST'])
+@login_required
+def confirm_reservation_request(request_id):
+    req = ReservationRequest.query.get_or_404(request_id)
+    if req.status != 'pending':
+        flash('This request has already been processed.', 'warning')
+        return redirect(url_for('reservation_request_detail', request_id=request_id))
+
+    fixed_timezone = pytz.timezone('Asia/Riyadh')
+    start_time = datetime.datetime.combine(req.preferred_date, req.preferred_time)
+    start_time = fixed_timezone.localize(start_time)
+
+    # Check if customer already exists
+    customer = Customer.query.filter_by(phone=req.customer_phone).first()
+    if not customer:
+        # Create a new customer from request data
+        customer = Customer(
+            name=req.customer_name,
+            phone=req.customer_phone,
+            email=req.customer_email or '',
+            gender=1
+        )
+        db.session.add(customer)
+        db.session.flush()
+
+    # Get default package
+    default_package = Package.query.filter_by(is_active=True).first()
+    if not default_package:
+        flash('Error: No active package found. Please create a package first.', 'danger')
+        return redirect(url_for('reservation_request_detail', request_id=request_id))
+
+    # Create the log
+    employee = Employee.query.filter_by(user_id=current_user.id).first()
+    if not employee:
+        flash('Error: No employee profile linked to your account.', 'danger')
+        return redirect(url_for('reservation_request_detail', request_id=request_id))
+
+    new_log = Log(
+        space=req.space or Space.query.filter_by(is_ready=True).first(),
+        customer=customer,
+        employee=employee,
+        is_active=True,
+        start_time=start_time,
+        package=default_package,
+        use_subscription=False
+    )
+    db.session.add(new_log)
+    db.session.flush()
+
+    req.status = 'confirmed'
+    req.processed_at = datetime.datetime.now(pytz.utc)
+    req.processed_by_id = current_user.id
+    req.log_id = new_log.id
+    db.session.commit()
+
+    flash(f'Reservation confirmed successfully! Log #{new_log.id} created.', 'success')
+    return redirect(url_for('reservation_requests'))
+
+
+@app.route('/reservation-request/<int:request_id>/reject', methods=['POST'])
+@login_required
+def reject_reservation_request(request_id):
+    req = ReservationRequest.query.get_or_404(request_id)
+    if req.status != 'pending':
+        flash('This request has already been processed.', 'warning')
+        return redirect(url_for('reservation_request_detail', request_id=request_id))
+
+    req.status = 'rejected'
+    req.staff_notes = request.form.get('staff_notes', '')
+    req.processed_at = datetime.datetime.now(pytz.utc)
+    req.processed_by_id = current_user.id
+    db.session.commit()
+
+    flash('Request rejected successfully.', 'info')
+    return redirect(url_for('reservation_requests'))
+
+
+@app.route('/reservation-request/<int:request_id>/modify', methods=['POST'])
+@login_required
+def modify_reservation_request(request_id):
+    req = ReservationRequest.query.get_or_404(request_id)
+    if req.status != 'pending':
+        flash('This request has already been processed.', 'warning')
+        return redirect(url_for('reservation_request_detail', request_id=request_id))
+
+    # Get modified values from form
+    new_date_str = request.form.get('new_date')
+    new_time_str = request.form.get('new_time')
+    new_space_id = request.form.get('new_space_id')
+
+    fixed_timezone = pytz.timezone('Asia/Riyadh')
+
+    try:
+        if new_date_str:
+            req.preferred_date = datetime.datetime.strptime(new_date_str, '%Y-%m-%d').date()
+        if new_time_str:
+            time_parts = new_time_str.split(':')
+            req.preferred_time = time(int(time_parts[0]), int(time_parts[1]))
+        if new_space_id:
+            req.space_id = int(new_space_id)
+    except (ValueError, IndexError):
+        flash('Invalid date or time format.', 'danger')
+        return redirect(url_for('reservation_request_detail', request_id=request_id))
+
+    # Create customer and log with modified values
+    customer = Customer.query.filter_by(phone=req.customer_phone).first()
+    if not customer:
+        customer = Customer(
+            name=req.customer_name,
+            phone=req.customer_phone,
+            email=req.customer_email or '',
+            gender=1
+        )
+        db.session.add(customer)
+        db.session.flush()
+
+    default_package = Package.query.filter_by(is_active=True).first()
+    if not default_package:
+        flash('Error: No active package found.', 'danger')
+        return redirect(url_for('reservation_request_detail', request_id=request_id))
+
+    employee = Employee.query.filter_by(user_id=current_user.id).first()
+    if not employee:
+        flash('Error: No employee profile linked to your account.', 'danger')
+        return redirect(url_for('reservation_request_detail', request_id=request_id))
+
+    start_time = datetime.datetime.combine(req.preferred_date, req.preferred_time)
+    start_time = fixed_timezone.localize(start_time)
+
+    space = Space.query.get(req.space_id) if req.space_id else Space.query.filter_by(is_ready=True).first()
+
+    new_log = Log(
+        space=space,
+        customer=customer,
+        employee=employee,
+        is_active=True,
+        start_time=start_time,
+        package=default_package,
+        use_subscription=False
+    )
+    db.session.add(new_log)
+    db.session.flush()
+
+    req.status = 'confirmed'
+    req.staff_notes = request.form.get('staff_notes', '')
+    req.processed_at = datetime.datetime.now(pytz.utc)
+    req.processed_by_id = current_user.id
+    req.log_id = new_log.id
+    db.session.commit()
+
+    flash(f'Reservation modified and confirmed! Log #{new_log.id} created.', 'success')
+    return redirect(url_for('reservation_requests'))
+
 
 # Temporary route to restore admin privileges for admin2
 @app.route('/restore_admin')

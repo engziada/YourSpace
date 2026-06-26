@@ -1,0 +1,22 @@
+<!-- templates/profile.html -->
+{% extends 'master.html' %}
+
+{% block title %}Profile | Your Space{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1>Profile</h1>
+        <p>Manage your account settings here.</p>
+        <hr>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card translucent-card p-4">
+                    <h5 class="mb-3">Account Information</h5>
+                    <p><strong>Username:</strong> {{ current_user.username }}</p>
+                    <p><strong>Email:</strong> {{ current_user.email if current_user.email else 'Not set' }}</p>
+                    <a href="{{ url_for('change_password') }}" class="btn btn-primary">Change Password</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

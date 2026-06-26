@@ -1,4 +1,4 @@
-<!-- templates/users.html -->
+<!-- templates/packages.html -->
 {% extends 'master.html' %}
 
 {% block title %}Packages | Your Space{% endblock %}
@@ -33,6 +33,13 @@
                     <a href="{{ url_for('delete_package', package_id=package.id) }}" onclick="return confirm('Are you sure you want to delete this package?');" title="Delete Package">
                         <span class="material-symbols-outlined">delete</span>
                     </a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="text-center text-muted py-4">
+                    <span class="material-symbols-outlined" style="font-size: 2rem; color: #adb5bd;">inbox</span>
+                    <p class="mt-2 mb-0">No packages found. <a href="{{ url_for('add_package') }}">Add your first package</a>.</p>
                 </td>
             </tr>
             {% endfor %}

@@ -1,0 +1,171 @@
+{% extends 'master.html' %}
+
+{% block title %}Request #{{ req.id }} | Your Space{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Request #{{ req.id }}</h2>
+        <a href="{{ url_for('reservation_requests') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left mr-1"></i>Back to List
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Customer Details -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <i class="fas fa-user mr-2"></i>Customer Details
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless table-sm">
+                        <tr><td><strong>Name:</strong></td><td>{{ req.customer_name }}</td></tr>
+                        <tr><td><strong>Phone:</strong></td><td>{{ req.customer_phone }}</td></tr>
+                        <tr><td><strong>Email:</strong></td><td>{{ req.customer_email or 'N/A' }}</td></tr>
+                        <tr><td><strong>Submitted:</strong></td><td>{{ req.created_at.strftime('%d/%m/%Y %H:%M') }}</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Request Details -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-calendar mr-2"></i>Request Details
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless table-sm">
+                        <tr><td><strong>Preferred Date:</strong></td><td>{{ req.preferred_date.strftime('%d/%m/%Y') }}</td></tr>
+                        <tr><td><strong>Preferred Time:</strong></td><td>{{ req.preferred_time.strftime('%H:%M') }}</td></tr>
+                        <tr><td><strong>Duration:</strong></td><td>{{ req.duration_hours }} hour(s)</td></tr>
+                        <tr><td><strong>Preferred Space:</strong></td><td>{{ req.space.name if req.space else 'No preference' }}</td></tr>
+                        <tr><td><strong>Status:</strong></td><td>
+                            {% if req.status == 'pending' %}
+                                <span class="badge badge-warning">Pending</span>
+                            {% elif req.status == 'confirmed' %}
+                                <span class="badge badge-success">Confirmed</span>
+                            {% elif req.status == 'rejected' %}
+                                <span class="badge badge-danger">Rejected</span>
+                            {% else %}
+                                <span class="badge badge-secondary">{{ req.status }}</span>
+                            {% endif %}
+                        </td></tr>
+                        {% if req.staff_notes %}
+                        <tr><td><strong>Staff Notes:</strong></td><td>{{ req.staff_notes }}</td></tr>
+                        {% endif %}
+                    </table>
+                    {% if req.notes %}
+                        <hr>
+                        <p><strong>Customer Notes:</strong></p>
+                        <p class="text-muted">{{ req.notes }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if req.status == 'pending' %}
+    <!-- Availability Check -->
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+            <i class="fas fa-search mr-2"></i>Availability Check
+        </div>
+        <div class="card-body">
+            {% if req.space %}
+                <p><strong>Space:</strong> {{ req.space.name }}</p>
+                <p><strong>Date:</strong> {{ req.preferred_date.strftime('%d/%m/%Y') }}</p>
+                {% if existing_logs %}
+                    <p class="text-warning"><i class="fas fa-exclamation-triangle mr-1"></i>Existing active reservations on this date:</p>
+                    <ul>
+                        {% for log in existing_logs %}
+                        <li>{{ log.customer.name }} — {{ log.start_time.strftime('%H:%M') }} ({{ log.space.name }})</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-success"><i class="fas fa-check-circle mr-1"></i>No active reservations found for this space on the requested date.</p>
+                {% endif %}
+            {% else %}
+                <p class="text-info"><i class="fas fa-info-circle mr-1"></i>Customer has no space preference. Staff can assign any available space.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="row">
+        <!-- Confirm As-Is -->
+        <div class="col-md-4 mb-4">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">Confirm As Requested</div>
+                <div class="card-body">
+                    <p class="small text-muted">Create a reservation log exactly as requested.</p>
+                    <form method="post" action="{{ url_for('confirm_reservation_request', request_id=req.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-success btn-block">Confirm</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modify & Confirm -->
+        <div class="col-md-4 mb-4">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">Modify & Confirm</div>
+                <div class="card-body">
+                    <form method="post" action="{{ url_for('modify_reservation_request', request_id=req.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="form-group">
+                            <label>New Date</label>
+                            <input type="date" name="new_date" class="form-control form-control-sm" value="{{ req.preferred_date }}">
+                        </div>
+                        <div class="form-group">
+                            <label>New Time</label>
+                            <input type="time" name="new_time" class="form-control form-control-sm" value="{{ req.preferred_time.strftime('%H:%M') }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Assign Space</label>
+                            <select name="new_space_id" class="form-control form-control-sm">
+                                <option value="">-- Select Space --</option>
+                                {% for space in available_spaces %}
+                                <option value="{{ space.id }}" {% if req.space_id == space.id %}selected{% endif %}>{{ space.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Staff Notes</label>
+                            <textarea name="staff_notes" class="form-control form-control-sm" rows="2" placeholder="Notes for customer (optional)"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Modify & Confirm</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reject -->
+        <div class="col-md-4 mb-4">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">Reject Request</div>
+                <div class="card-body">
+                    <form method="post" action="{{ url_for('reject_reservation_request', request_id=req.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="form-group">
+                            <label>Rejection Reason / Notes</label>
+                            <textarea name="staff_notes" class="form-control form-control-sm" rows="3" placeholder="Reason for rejection (optional)"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-danger btn-block">Reject</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle mr-2"></i>This request has already been processed.
+        {% if req.log %}
+            <a href="{{ url_for('logs') }}" class="alert-link">View Log #{{ req.log.id }}</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
